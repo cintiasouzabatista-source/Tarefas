@@ -128,7 +128,20 @@ window.fechar=fechar;
 
 document.getElementById('data-hoje').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'short'});
 
-function irParaFilhas(){ aba='filhas'; souPais=false; document.getElementById('painel-pais').classList.add('hidden'); document.getElementById('btn-pais').textContent='🔒 Pais'; render(); }
+function irParaFilhas(){ 
+  aba = dados.filhas.length > 0 ? dados.filhas[0].id : 'premios'; 
+  souPais=false; 
+  document.getElementById('painel-pais').classList.add('hidden'); 
+  document.getElementById('btn-pais').textContent='🔒 Pais'; 
+  render(); 
+}
+  function render(){
+  // CORREÇÃO: se aba for 'filhas', mostra a primeira filha
+  if(aba==='filhas' && dados.filhas.length>0){
+    aba = dados.filhas[0].id;
+  }
+  const abas=document.getElementById('abas');
+  // ... resto continua igual
 function abrirPais(){ if(souPais){ sairPais(); return; } document.getElementById('pin-input').value=''; document.getElementById('pin-erro').classList.add('hidden'); abrir('modal-pin'); setTimeout(()=>document.getElementById('pin-input').focus(),100); }
 function mostrarPin(){
   const inp = document.getElementById('pin-input');
@@ -150,7 +163,8 @@ function renderFormTarefa(){
   h+=`<button onclick="paraSel='revezamento';renderFormTarefa()" class="px-3 py-1.5 rounded-xl text-xs font-extrabold ${paraSel==='revezamento'?'bg-amber-500 text-white':'bg-slate-100'}">🔄 Revezar</button>`;
   h+=dados.filhas.map(f=>`<button onclick="paraSel='${f.id}';renderFormTarefa()" class="px-3 py-1.5 rounded-xl text-xs font-extrabold ${paraSel===f.id?'bg-indigo-600 text-white':'bg-slate-100'}">${f.avatar} ${f.nome}</button>`).join('');
   document.getElementById('tarefa-para').innerHTML=h;
-  const dias=[['Seg',1],['Ter',2],['Qua',3],['Qui',4],['Sex',5]];
+ // DEPOIS - com Sáb e Dom
+const dias=[['Seg',1],['Ter',2],['Qua',3],['Qui',4],['Sex',5],['Sáb',6],['Dom',0]];
   document.getElementById('tarefa-dias').innerHTML=dias.map(([n,d])=>`<button onclick="toggleDia(${d})" class="px-3 py-1.5 rounded-xl text-xs font-extrabold ${diasSel.includes(d)?'bg-indigo-600 text-white':'bg-slate-100'}">${n}</button>`).join('');
 }
 function toggleDia(d){ diasSel = diasSel.includes(d) ? diasSel.filter(x=>x!==d) : [...diasSel,d]; renderFormTarefa(); }
@@ -178,8 +192,8 @@ function tarefasDaFilha(filhaId, dia){
     return false;
   });
 }
-function statsFilha(id){ let tot=0, feito=0; [1,2,3,4,5].forEach(d=>{ tarefasDaFilha(id,d).forEach(t=>{ tot++; if(dados.feitos[`${t.id}_${id}_${d}`]) feito++; }); }); return {tot, feito, pct: tot?Math.round(feito/tot*100):0}; }
-
+// DEPOIS
+function statsFilha(id){ let tot=0, feito=0; [0,1,2,3,4,5,6].forEach(d=>{
 function render(){
   const abas=document.getElementById('abas');
   abas.innerHTML = dados.filhas.map(f=>{ const s=statsFilha(f.id); return `<button onclick="aba='${f.id}';render()" class="shrink-0 px-3.5 py-2 rounded-2xl font-extrabold text-sm border ${aba===f.id?'bg-indigo-600 text-white':'bg-white'}">${f.avatar} ${f.nome} <span class="text-[11px] px-1.5 py-0.5 rounded-full ${aba===f.id?'bg-white/20':'bg-slate-100'}">${s.pct}%</span></button>`}).join('') + `<button onclick="aba='premios';render()" class="shrink-0 px-3.5 py-2 rounded-2xl font-extrabold text-sm border ${aba==='premios'?'bg-amber-500 text-white':'bg-white text-amber-600'}">🏆 Prêmios</button>`;
@@ -196,7 +210,11 @@ function render(){
     return;
   }
   const s=statsFilha(filha.id);
-  const diasHtml=[1,2,3,4,5].map(d=>{ const nomes=['','Seg','Ter','Qua','Qui','Sex']; return `<button onclick="diaVendo=${d};render()" class="flex-1 py-2 rounded-xl text-xs font-extrabold ${diaVendo===d?'bg-indigo-600 text-white':'text-slate-500'}">${nomes[d]}</button>`}).join('');
+// DEPOIS - 7 dias, com folga marcada
+const diasHtml=[1,2,3,4,5,6,0].map(d=>{ 
+  const nomes=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']; 
+  const temTarefa = tarefasDaFilha(filha.id, d).length > 0;
+  return `<button onclick="diaVendo=${d};render()" class="flex-1 py-2 rounded-xl text-xs font-extrabold relative ${diaVendo===d?'bg-indigo-600 text-white':'text-slate-500'}">${nomes[d]} ${(d===0||d===6) && !temTarefa ? '<span class="block text-[8px] opacity-60">Folga</span>' : ''}</button>`}).join('');iasHtml=[1,2,3,4,5].map(d=>{ const nomes=['','Seg','Ter','Qua','Qui','Sex']; return `<button onclick="diaVendo=${d};render()" class="flex-1 py-2 rounded-xl text-xs font-extrabold ${diaVendo===d?'bg-indigo-600 text-white':'text-slate-500'}">${nomes[d]}</button>`}).join('');
   const lista=tarefasDaFilha(filha.id, diaVendo);
   let tarefasHtml='';
   if(lista.length===0) tarefasHtml=`<div class="bg-white rounded-3xl p-6 text-center"><p class="text-sm font-extrabold">Sem tarefas neste dia ✨</p></div>`;
