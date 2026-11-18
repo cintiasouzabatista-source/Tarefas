@@ -130,7 +130,11 @@ document.getElementById('data-hoje').textContent = new Date().toLocaleDateString
 
 function irParaFilhas(){ aba='filhas'; souPais=false; document.getElementById('painel-pais').classList.add('hidden'); document.getElementById('btn-pais').textContent='🔒 Pais'; render(); }
 function abrirPais(){ if(souPais){ sairPais(); return; } document.getElementById('pin-input').value=''; document.getElementById('pin-erro').classList.add('hidden'); abrir('modal-pin'); setTimeout(()=>document.getElementById('pin-input').focus(),100); }
-function confirmarPin(){ const v=document.getElementById('pin-input').value.trim(); if(v===String(dados.pin)){ souPais=true; fechar('modal-pin'); document.getElementById('painel-pais').classList.remove('hidden'); document.getElementById('btn-pais').textContent='🔓 Sair'; toast('Modo Pais ativado!'); render(); } else { document.getElementById('pin-erro').classList.remove('hidden'); } }
+function mostrarPin(){
+  const inp = document.getElementById('pin-input');
+  inp.type = inp.type === 'password' ? 'tel' : 'password';
+}
+  function confirmarPin(){ const v=document.getElementById('pin-input').value.trim(); if(v===String(dados.pin)){ souPais=true; fechar('modal-pin'); document.getElementById('painel-pais').classList.remove('hidden'); document.getElementById('btn-pais').textContent='🔓 Sair'; toast('Modo Pais ativado!'); render(); } else { document.getElementById('pin-erro').classList.remove('hidden'); } }
 function resetarPin(){ if(!confirm('Resetar o PIN para 1234?')) return; dados.pin='1234'; salvar(); document.getElementById('pin-erro').classList.add('hidden'); toast('PIN resetado para 1234! Digita 1234 e clica em Entrar'); }
 function sairPais(){ souPais=false; document.getElementById('painel-pais').classList.add('hidden'); document.getElementById('btn-pais').textContent='🔒 Pais'; render(); }
 
