@@ -1,52 +1,12 @@
-const CACHE_NAME = 'tarefas-familia-v7'; // <-- Mudamos para v7 para forçar a atualização
-
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        // Só arquivos que REALMENTE existem no seu app novo
-        const urls = [
-          './',
-          './index.html',
-          './manifest.json',
-          './icon-192x192.png',
-          './icon-512x512.png'
-        ];
-        
-        return Promise.all(
-          urls.map(url => 
-            cache.add(url).catch(err => {
-              console.warn('Falhou ao colocar no cache:', url, err);
-            })
-          )
-        );
-      })
-      .then(() => self.skipWaiting())
-  );
+const CACHE = 'tarefas-familia-v8';
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './index.html', './manifest.json'])));
+  self.skipWaiting();
 });
-
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys => 
-      Promise.all(
-        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-      )
-    ).then(() => self.clients.claim())
-  );
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.map(k => k !== CACHE ? caches.delete(k) : null))));
+  self.clients.claim();
 });
-
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        if (response.status === 200 && event.request.url.startsWith(self.location.origin)) {
-          const resClone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, resClone));
-        }
-        return response;
-      })
-      .catch(() => caches.match(event.request))
-  );
+self.addEventListener('fetch', e => {
+  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
 });
