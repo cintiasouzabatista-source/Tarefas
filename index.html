@@ -55,7 +55,7 @@
     <p class="text-xs font-bold text-slate-500">Digite o PIN para entrar</p>
     <div class="relative">
      <input id="pin-input" type="password" inputmode="numeric" maxlength="4" placeholder="••••" oninput="verificarPinAutomatico(this)" class="w-full text-center text-3xl tracking-[0.5em] font-black py-3 bg-slate-100 rounded-2xl outline-none">
-      <button onclick="mostrarPin()" class="absolute right-3 top-1/2 -translate-y-1/2 text-lg">🧿</button>
+      <button onclick="mostrarPin()" class="absolute right-3 top-1/2 -translate-y-1/2 text-lg"></button>
     </div>
     <p id="pin-erro" class="text-xs font-bold text-rose-600 hidden">PIN incorreto. Tenta de novo</p>
     <div class="grid grid-cols-2 gap-2"><button onclick="fechar('modal-pin')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Cancelar</button><button onclick="confirmarPin()" class="bg-indigo-600 text-white py-2.5 rounded-xl font-extrabold text-sm">Entrar</button></div>
