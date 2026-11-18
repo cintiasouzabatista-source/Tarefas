@@ -35,6 +35,10 @@
     </div>
     <div class="grid grid-cols-2 gap-2 mt-2">
       <button onclick="fecharSemana()" class="bg-emerald-500 py-2.5 rounded-xl text-xs font-black">🏁 Fechar Semana</button>
+      <div class="grid grid-cols-2 gap-2 mt-2">
+  <button onclick="resetarChecks()" class="bg-rose-500 py-2.5 rounded-xl text-xs font-black">🔄 Zerar Checks de Todas</button>
+  <button onclick="abrirModalTrocarPin()" class="bg-white text-slate-900 py-2.5 rounded-xl text-xs font-black">🔐 Trocar PIN</button>
+</div>
       <button onclick="abrirImportar()" class="bg-white text-slate-900 py-2.5 rounded-xl text-xs font-black">📥 Importar Backup</button>
     </div>
   </div>
@@ -299,6 +303,32 @@ function gerarBackup(){
   abrir('modal-backup');
   document.getElementById('backup-info').textContent='Código gerado! Manda pra mamãe.';
 }
+  function resetarChecks(){
+  if(!souPais) return;
+  if(!confirm('Zerar os checks de TODAS as filhas? As tarefas continuam, só os ✓ que somem.')) return;
+  dados.feitos = {};
+  salvar();
+  toast('Checks zerados de todas! 🔄');
+}
+function resetarChecksFilha(filhaId){
+  if(!souPais) return;
+  const filha = dados.filhas.find(f=>f.id===filhaId);
+  if(!confirm(`Zerar os checks da ${filha.nome}?`)) return;
+  Object.keys(dados.feitos).forEach(chave=>{
+    if(chave.includes(`_${filhaId}_`)) delete dados.feitos[chave];
+  });
+  salvar();
+  toast(`Checks da ${filha.nome} zerados!`);
+}
+  function abrirModalTrocarPin(){
+  const novo = prompt('Novo PIN de 4 números:\nEx: 5678');
+  if(!novo) return;
+  if(novo.length !== 4 || isNaN(novo)){ alert('Tem que ser 4 números!'); return; }
+  dados.pin = novo;
+  salvar();
+  toast('PIN novo salvo! 🔐');
+  alert('PIN novo: ' + novo + '\nAnota aí!');
+}
 function copiarBackup(){ navigator.clipboard.writeText(document.getElementById('backup-codigo').value); toast('Copiado!'); }
 function abrirImportar(){
   document.getElementById('backup-titulo').textContent='📥 Importar Backup da Filha';
@@ -325,6 +355,19 @@ render();
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(()=>{});
 }
+  // BACKUP AUTOMÁTICO DO FIM DO DIA
+function verificarBackupAutomatico(){
+  const hoje = new Date().toDateString();
+  const ultimo = localStorage.getItem('ultimo_backup_dia');
+  const hora = new Date().getHours();
+  if(hora >= 20 && ultimo !== hoje){
+    if(confirm('📦 Fim do dia! Mandar o backup de hoje pra mamãe no WhatsApp?')){
+      localStorage.setItem('ultimo_backup_dia', hoje);
+      gerarBackup();
+    }
+  }
+}
+setTimeout(verificarBackupAutomatico, 2000);
 </script>
 </body>
 </html>
