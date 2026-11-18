@@ -2,921 +2,244 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#2563eb">
-<title>Fluxo Caixa</title>
-<style>
-    :root { --bg-body: #f1f5f9; --bg-container: #ffffff; --texto-principal: #0f172a; --texto-secundario: #64748b; --borda: #e2e8f0; --radius: 12px; --entrada: #10b981; --saida: #ef4444; --cartao: #f59e0b; --reserva-cor: #06b6d4; --header-bg: #2563eb; --header-txt: #ffffff; }
-    body.theme-escuro { --bg-body: #0f172a; --bg-container: #1e293b; --texto-principal: #f8fafc; --texto-secundario: #94a3b8; --borda: #334155; --header-bg: #1e293b; }
-    body.theme-white { --bg-body: #ffffff; --bg-container: #f8fafc; --texto-principal: #1e293b; --borda: #cbd5e1; --header-bg: #e2e8f0; --header-txt: #0f172a; }
-    body.theme-vintage { --bg-body: #fffae0; --bg-container: #fffdf5; --texto-principal: #2b2b2b; --borda: #2b2b2b; --radius: 0px; --entrada: #49a078; --saida: #d64933; --header-bg: #2b2b2b; --header-txt: #fffae0; }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
-    body { background: var(--bg-body); color: var(--texto-principal); padding: 16px 16px 95px 16px; }
-.container { max-width: 500px; margin: 0 auto; }
-.app-header { display: flex; justify-content: space-between; padding: 12px; background: var(--header-bg); border-radius: var(--radius); margin-bottom: 16px; color: var(--header-txt); }
-.icon-btn { background: none; border: none; font-size: 1.2rem; color: var(--header-txt); cursor: pointer; }
-.app-view { display: none; }
-.app-view.ativa { display: block; }
-
-/* Navegação de Mês por Setas e Clique */
-.seletor-mes-topo { display: flex; align-items: center; justify-content: space-between; background: var(--bg-container); border: 1px solid var(--borda); border-radius: var(--radius); padding: 10px 16px; margin-bottom: 16px; }
-.btn-mes-nav { background: none; border: none; font-size: 1.1rem; color: var(--texto-principal); cursor: pointer; padding: 4px 8px; border-radius: 6px; }
-.btn-mes-nav:hover { background: var(--bg-body); }
-.mes-titulo-atual { font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 6px; color: var(--texto-principal); }
-
-.cards-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-.card { background: var(--bg-container); padding: 16px; text-align: center; border-radius: var(--radius); border: 1px solid var(--borda); }
-.card.saldo-total { grid-column: span 2; }
-.card.saldo-total p { font-size: 2.2rem; font-weight: 700; }
-.info-subtil-container { margin-top: 12px; border-top: 1px solid var(--borda); padding-top: 16px; }
-.cor-entrada { color: var(--entrada); }.cor-saida { color: var(--saida); }.cor-cartao { color: var(--cartao); }.cor-reserva { color: var(--reserva-cor); }
-.filtro-select { width: 100%; padding: 12px; border-radius: var(--radius); border: 1px solid var(--borda); margin-bottom: 10px; background: var(--bg-container); color: var(--texto-principal); }
-.secao-conteudo { background: var(--bg-container); padding: 20px; border-radius: var(--radius); border: 1px solid var(--borda); margin-bottom: 20px; }
-.colunas-container { display: flex; justify-content: space-around; height: 120px; align-items: flex-end; border-bottom: 1px solid var(--borda); text-align: center; }
-.coluna-vertical-barra { width: 30px; border-radius: 6px 6px 0 0; transition: height 0.3s; }
-.donut-chart { width: 140px; height: 140px; border-radius: 50%; margin: 12px auto; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.donut-hole { width: 96px; height: 96px; background: var(--bg-container); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-.config-btn-bloco { width: 100%; padding: 16px; border-radius: var(--radius); border: 1px solid var(--borda); background: var(--bg-container); color: var(--texto-principal); margin-bottom: 12px; text-align: left; cursor: pointer; }
-.chat-input-area { display: flex; gap: 8px; background: var(--bg-container); padding: 6px 16px; border-radius: 24px; border: 1px solid var(--borda); }
-.chat-input { flex: 1; border: none; background: none; outline: none; color: var(--texto-principal); }
-.btn-enviar { background: var(--header-bg); color: var(--header-txt); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
-.menu-rodape-wrapper { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; background: var(--bg-container); padding: 10px 16px; border-top: 1px solid var(--borda); z-index: 99; }
-.menu-rodape { display: grid; grid-template-columns: repeat(5, 1fr); }
-.tab-item { display: flex; flex-direction: column; align-items: center; background: none; border: none; color: var(--texto-secundario); font-size: 0.75rem; cursor: pointer; }
-.tab-item.ativo { color: var(--header-bg); font-weight: 700; }
-.beneficio-resumo { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:16px; }
-.beneficio-card { background:var(--bg-container); padding:14px; border:1px solid var(--borda); border-radius:var(--radius); }
-.beneficio-card.clicavel { cursor:pointer; transition:transform .12s, border-color .12s, box-shadow .12s; }
-.beneficio-card.clicavel:hover { transform:translateY(-1px); }
-.beneficio-card.clicavel.selecionado { border-color:var(--header-bg); box-shadow:0 0 0 2px color-mix(in srgb, var(--header-bg) 15%, transparent); }
-.beneficio-titulo { display:flex; justify-content:space-between; align-items:center; font-weight:700; margin-bottom:8px; }
-.beneficio-seta { font-size:1.3rem; color:var(--texto-secundario); }
-.beneficio-valor { font-size:1.45rem; font-weight:700; margin-bottom:6px; }
-.beneficio-card .linha-2 { line-height:1.5; }
-.beneficio-acoes { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:16px; }
-.btn-beneficio { padding:12px; border-radius:var(--radius); border:1px solid var(--borda); background:var(--bg-container); color:var(--texto-principal); cursor:pointer; font-weight:600; }
-.badge-beneficio { display:inline-block; font-size:.7rem; padding:3px 7px; border-radius:10px; background:var(--bg-body); border:1px solid var(--borda); margin-left:5px; }
-.item-transacao { padding: 10px 5px; border-bottom: 1px solid var(--borda); cursor: pointer; transition: background 0.1s; }
-.item-transacao:hover { background: var(--bg-body); }
-.linha-1 { display: flex; justify-content: space-between; }
-.linha-2 { font-size: 0.75rem; color: var(--texto-secundario); }
-
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
-.modal-container { background: var(--bg-container); color: var(--texto-principal); padding: 20px; border-radius: var(--radius); width: 90%; max-width: 400px; }
-.btn-resposta { padding: 10px 14px; margin: 6px; border-radius: 20px; border: 1px solid var(--borda); background: var(--bg-body); color: var(--texto-principal); cursor: pointer; font-weight: 600; }
-
-.form-grupo { margin-bottom: 12px; }
-.form-grupo label { display: block; font-size: 0.85rem; color: var(--texto-secundario); margin-bottom: 4px; }
-.form-grupo input, .form-grupo select { width: 100%; padding: 10px; border-radius: var(--radius); border: 1px solid var(--borda); background: var(--bg-container); color: var(--texto-principal); }
-.modal-botoes { display: flex; gap: 8px; margin-top: 16px; }
-.btn-acao-modal { flex: 1; padding: 10px; border-radius: var(--radius); border: none; font-weight: 600; cursor: pointer; }
-.btn-salvar { background: var(--header-bg); color: var(--header-txt); }
-.btn-excluir { background: var(--saida); color: #fff; }
-.btn-cancelar { background: var(--borda); color: var(--texto-principal); }
-
-/* Grid de seleção rápida de meses no Modal */
-.grid-meses-modal { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-height: 300px; overflow-y: auto; margin-top: 10px; }
-.btn-mes-grid { padding: 10px; border-radius: var(--radius); border: 1px solid var(--borda); background: var(--bg-body); color: var(--texto-principal); font-size: 0.85rem; cursor: pointer; text-align: center; }
-.btn-mes-grid.ativo { background: var(--header-bg); color: var(--header-txt); border-color: transparent; font-weight: bold; }
-    .valor-oculto {
-        font-size: 0 !important;
-    }
-    .valor-oculto::after {
-        content: '••••••';
-        font-size: 1rem;
-        letter-spacing: 2px;
-    }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tarefas - Família</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>body{font-family:'Nunito',sans-serif;background:#F8FAFC} .no-scrollbar::-webkit-scrollbar{display:none}</style>
 </head>
-<body>
-<div class="container">
-<div class="app-header">
-    <div class="app-title">Meu Saldo</div>
-    <div><button class="icon-btn" onclick="alternarVisibilidade()">🔓</button><button class="icon-btn" onclick="alternarTema()">🫟</button></div>
+<body class="pb-24 text-slate-800 select-none">
+
+<header class="bg-indigo-600 text-white px-4 py-4 rounded-b-3xl sticky top-0 z-30">
+  <div class="max-w-md mx-auto flex items-center justify-between">
+    <div><h1 class="text-xl font-black">Tarefas 🏡</h1><p id="data-hoje" class="text-xs font-bold text-indigo-200"></p></div>
+    <div class="flex gap-1.5">
+      <button onclick="irParaFilhas()" class="bg-white/20 px-3 py-2 rounded-xl text-xs font-extrabold">👧 Filhas</button>
+      <button id="btn-pais" onclick="abrirPais()" class="bg-slate-900 px-3 py-2 rounded-xl text-xs font-extrabold">🔒 Pais</button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-md mx-auto px-4 mt-4 space-y-3">
+  <!-- ABAS FILHAS -->
+  <div id="abas" class="flex gap-2 overflow-x-auto no-scrollbar"></div>
+
+  <!-- PAINEL PAIS -->
+  <div id="painel-pais" class="hidden bg-slate-900 text-white p-3 rounded-2xl">
+    <p class="text-xs font-extrabold mb-2 text-center">MODO PAIS ATIVO - <button onclick="sairPais()" class="text-amber-300 underline">Sair</button></p>
+    <div class="grid grid-cols-3 gap-2">
+      <button onclick="abrirModalFilha()" class="bg-indigo-600 py-2 rounded-xl text-xs font-extrabold">+ Filha</button>
+      <button onclick="abrirModalTarefa()" class="bg-emerald-600 py-2 rounded-xl text-xs font-extrabold">+ Tarefa</button>
+      <button onclick="abrirModalValor()" class="bg-amber-500 py-2 rounded-xl text-xs font-extrabold">🪙 Valor</button>
+    </div>
+    <div class="grid grid-cols-2 gap-2 mt-2">
+      <button onclick="fecharSemana()" class="bg-emerald-500 py-2.5 rounded-xl text-xs font-black">🏁 Fechar Semana</button>
+      <button onclick="abrirImportar()" class="bg-white text-slate-900 py-2.5 rounded-xl text-xs font-black">📥 Importar Backup</button>
+    </div>
+  </div>
+
+  <!-- CARD FILHA -->
+  <div id="tela" class="space-y-3"></div>
+
+  <!-- BACKUP - APARECE SEMPRE PARA AS FILHAS -->
+  <div class="bg-amber-50 border border-amber-200 rounded-3xl p-4 space-y-2">
+    <h3 class="font-black text-sm text-amber-900">📦 Backup da Semana</h3>
+    <p class="text-xs font-bold text-amber-800">No fim da semana, toque aqui e mande o código pra mamãe no WhatsApp. Ela atualiza o app dela.</p>
+    <button onclick="gerarBackup()" class="w-full bg-amber-500 text-white py-3 rounded-2xl font-black text-sm">📤 Gerar Código e Mandar pra Mamãe</button>
+    <p id="backup-info" class="text-[11px] font-bold text-amber-700 text-center"></p>
+  </div>
+</main>
+
+<!-- TOAST -->
+<div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-slate-900 text-white p-3.5 rounded-2xl shadow-xl hidden z-50"><p id="toast-msg" class="text-xs font-bold"></p></div>
+
+<!-- MODAL PIN -->
+<div id="modal-pin" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
+  <div class="bg-white w-full max-w-xs rounded-3xl p-5 text-center space-y-3">
+    <h2 class="font-black">🔐 PIN dos Pais</h2>
+    <input id="pin-input" type="password" inputmode="numeric" maxlength="4" placeholder="••••" class="w-full text-center text-3xl tracking-[0.5em] font-black py-3 bg-slate-100 rounded-2xl outline-none">
+    <p id="pin-erro" class="text-xs font-bold text-rose-600 hidden">PIN incorreto</p>
+    <div class="grid grid-cols-2 gap-2"><button onclick="fechar('modal-pin')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Cancelar</button><button onclick="confirmarPin()" class="bg-indigo-600 text-white py-2.5 rounded-xl font-extrabold text-sm">Entrar</button></div>
+  </div>
 </div>
 
-<!-- BARRA DE NAVEGAÇÃO DE MÊS COM SETAS E CLIQUE -->
-<div class="seletor-mes-topo">
-    <button class="btn-mes-nav" onclick="mudarMes(-1)">◀</button>
-    <div class="mes-titulo-atual" id="label-mes-topo" onclick="abrirModalSeletorMes()">📅 Mês Atual</div>
-    <button class="btn-mes-nav" onclick="mudarMes(1)">▶</button>
+<!-- MODAL FILHA -->
+<div id="modal-filha" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
+  <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3">
+    <h2 class="font-black">Cadastrar Filha</h2>
+    <input id="filha-nome" placeholder="Nome: Rafa, Soso..." class="w-full px-3 py-2.5 bg-slate-100 rounded-xl font-bold outline-none">
+    <div><p class="text-xs font-extrabold text-slate-500">Avatar</p><div id="avatares" class="flex gap-2 mt-1 flex-wrap"></div></div>
+    <div class="grid grid-cols-2 gap-2"><button onclick="fechar('modal-filha')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Cancelar</button><button onclick="salvarFilha()" class="bg-indigo-600 text-white py-2.5 rounded-xl font-extrabold text-sm">Salvar</button></div>
+  </div>
 </div>
 
-<div class="app-view ativa" id="view-inicio">
-    <div class="cards-container">
-        <div class="card"><h3>entradas</h3><p class="cor-entrada">R$ <span id="card-entradas">0.00</span></p></div>
-        <div class="card"><h3>saídas</h3><p class="cor-saida">R$ <span id="card-saidas">0.00</span></p></div>
-        <div class="card"><h3>cartão</h3><p class="cor-cartao">R$ <span id="card-cartao">0.00</span></p></div>
-        <div class="card"><h3>reserva</h3><p class="cor-reserva">R$ <span id="card-reserva">0.00</span></p></div>
-        <div class="card saldo-total">
-            <h3>Saldo Atual</h3>
-            <p id="card-saldo">R$ 0.00</p>
-            <div class="info-subtil-container">
-                <div><strong>Média/Dia:</strong> <span id="previsao-valor">R$ 0.00</span></div>
-            </div>
-        </div>
-    </div>
-    <div class="chat-input-area">
-        <input type="text" id="campo-texto" class="chat-input" placeholder="Ex: salário 3500, gasolina 50 ou saldo +100">
-        <button type="button" class="btn-enviar" id="btn-enviar-comando" onclick="enviarComando()">➔</button>
-    </div>
+<!-- MODAL TAREFA -->
+<div id="modal-tarefa" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
+  <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3">
+    <h2 class="font-black">Nova Tarefa</h2>
+    <input id="tarefa-nome" placeholder="Ex: Lavar louça..." class="w-full px-3 py-2.5 bg-slate-100 rounded-xl font-bold outline-none">
+    <div><p class="text-xs font-extrabold text-slate-500">Ícone</p><div id="icones" class="flex gap-1.5 mt-1 flex-wrap"></div></div>
+    <div><p class="text-xs font-extrabold text-slate-500">Para quem?</p><div id="tarefa-para" class="flex gap-1.5 mt-1 flex-wrap"></div></div>
+    <div><p class="text-xs font-extrabold text-slate-500">Dias</p><div id="tarefa-dias" class="flex gap-1.5 mt-1"></div></div>
+    <div class="grid grid-cols-2 gap-2"><button onclick="fechar('modal-tarefa')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Cancelar</button><button onclick="salvarTarefa()" class="bg-emerald-600 text-white py-2.5 rounded-xl font-extrabold text-sm">Salvar</button></div>
+  </div>
 </div>
 
-<div class="app-view" id="view-historico">
-    <div class="secao-conteudo">
-        <div class="linha-1" style="cursor:pointer;" onclick="alternarHistorico('despesas')">
-            <h4 style="margin:0;">Histórico de despesas</h4><span id="seta-historico-despesas">▸</span>
-        </div>
-        <div id="painel-historico-despesas" style="display:none;margin-top:12px;">
-            <label class="linha-2">Período</label>
-            <select id="filtro-periodo-despesas" class="filtro-select" onchange="atualizarAplicativo()">
-                <option value="mes" selected>Este mês</option>
-                <option value="hoje">Hoje</option><option value="7dias">Últimos 7 dias</option><option value="mesAnterior">Mês anterior</option><option value="personalizado">Personalizado</option>
-            </select>
-            <div id="datas-personalizadas-despesas" style="display:none;gap:8px;grid-template-columns:1fr 1fr;margin-bottom:10px;">
-                <input type="date" id="data-inicio-despesas" onchange="atualizarAplicativo()">
-                <input type="date" id="data-fim-despesas" onchange="atualizarAplicativo()">
-            </div>
-            <select id="filtro-tipo" class="filtro-select" onchange="atualizarAplicativo()">
-                <option value="todos">Todos os Tipos</option><option value="entrada">Entradas</option>
-                <option value="saida">Saídas</option><option value="cartao">Cartão</option><option value="reserva">Reserva</option><option value="ajuste">Ajustes</option>
-            </select>
-            <div id="lista-transacoes-container"></div>
-        </div>
-    </div>
+<!-- MODAL VALOR -->
+<div id="modal-valor" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
+  <div class="bg-white w-full max-w-xs rounded-3xl p-5 space-y-3">
+    <h2 class="font-black">🪙 Valor do Ponto</h2>
+    <p class="text-xs font-bold text-slate-500">1 semana 100% = 1 ponto = quanto em R$?</p>
+    <input id="valor-input" type="number" step="0.01" class="w-full px-3 py-2.5 bg-slate-100 rounded-xl font-black text-lg">
+    <div class="grid grid-cols-2 gap-2"><button onclick="fechar('modal-valor')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Cancelar</button><button onclick="salvarValor()" class="bg-amber-500 text-white py-2.5 rounded-xl font-extrabold text-sm">Salvar</button></div>
+  </div>
 </div>
 
-<div class="app-view" id="view-beneficios">
-    <div class="beneficio-resumo" id="resumo-por-beneficio">
-        <div class="beneficio-card clicavel" data-beneficio="VR" onclick="selecionarBeneficio('VR')"><div class="beneficio-titulo"><span>🍽️ VR</span><span class="beneficio-seta">›</span></div><div class="beneficio-valor cor-entrada" id="saldo-VR">R$ 0,00</div><div class="linha-2"><span>Recebido <b id="recebido-VR">R$ 0,00</b></span> · <span>Utilizado <b id="utilizado-VR">R$ 0,00</b></span></div></div>
-        <div class="beneficio-card clicavel" data-beneficio="VA" onclick="selecionarBeneficio('VA')"><div class="beneficio-titulo"><span>🛒 VA</span><span class="beneficio-seta">›</span></div><div class="beneficio-valor cor-entrada" id="saldo-VA">R$ 0,00</div><div class="linha-2"><span>Recebido <b id="recebido-VA">R$ 0,00</b></span> · <span>Utilizado <b id="utilizado-VA">R$ 0,00</b></span></div></div>
-        <div class="beneficio-card clicavel" data-beneficio="Combustível" onclick="selecionarBeneficio('Combustível')"><div class="beneficio-titulo"><span>⛽ Combustível</span><span class="beneficio-seta">›</span></div><div class="beneficio-valor cor-entrada" id="saldo-Combustível">R$ 0,00</div><div class="linha-2"><span>Recebido <b id="recebido-Combustível">R$ 0,00</b></span> · <span>Utilizado <b id="utilizado-Combustível">R$ 0,00</b></span></div></div>
-        <div class="beneficio-card clicavel" data-beneficio="Outros" onclick="selecionarBeneficio('Outros')"><div class="beneficio-titulo"><span>🎁 Outros</span><span class="beneficio-seta">›</span></div><div class="beneficio-valor cor-entrada" id="saldo-Outros">R$ 0,00</div><div class="linha-2"><span>Recebido <b id="recebido-Outros">R$ 0,00</b></span> · <span>Utilizado <b id="utilizado-Outros">R$ 0,00</b></span></div></div>
+<!-- MODAL BACKUP / IMPORTAR -->
+<div id="modal-backup" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
+  <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3">
+    <h2 id="backup-titulo" class="font-black">📦 Backup</h2>
+    <p id="backup-texto" class="text-xs font-bold text-slate-500"></p>
+    <textarea id="backup-codigo" rows="5" class="w-full p-3 bg-slate-100 rounded-xl text-xs font-bold break-all outline-none"></textarea>
+    <div class="grid grid-cols-2 gap-2">
+      <button onclick="fechar('modal-backup')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Fechar</button>
+      <button id="backup-acao" onclick="copiarBackup()" class="bg-indigo-600 text-white py-2.5 rounded-xl font-extrabold text-sm">Copiar</button>
     </div>
-    <div class="secao-conteudo" id="detalhe-beneficio" style="display:none;">
-        <div class="linha-1"><h4 id="titulo-detalhe-beneficio">Detalhes</h4><button class="btn-beneficio" style="padding:6px 10px;" onclick="selecionarBeneficio('todos')">Todos</button></div>
-        <div class="linha-2" id="subtitulo-detalhe-beneficio" style="margin-top:6px;"></div>
-    </div>
-    <div class="beneficio-acoes">
-        <button class="btn-beneficio" onclick="abrirModalNovoBeneficio('entrada')">➕ Receber</button>
-        <button class="btn-beneficio" onclick="abrirModalNovoBeneficio('saida')">➖ Utilizar</button>
-    </div>
-    <div class="secao-conteudo">
-        <div class="linha-1" style="cursor:pointer;" onclick="alternarHistorico('beneficios')">
-            <h4 style="margin:0;">Histórico de Benefícios</h4><span id="seta-historico-beneficios">▸</span>
-        </div>
-        <div id="painel-historico-beneficios" style="display:none;margin-top:12px;">
-            <label class="linha-2">Período</label>
-            <select id="filtro-periodo-beneficios" class="filtro-select" onchange="atualizarBeneficios()">
-                <option value="mes" selected>Este mês</option>
-                <option value="hoje">Hoje</option><option value="7dias">Últimos 7 dias</option><option value="mesAnterior">Mês anterior</option><option value="personalizado">Personalizado</option>
-            </select>
-            <div id="datas-personalizadas-beneficios" style="display:none;gap:8px;grid-template-columns:1fr 1fr;margin-bottom:10px;">
-                <input type="date" id="data-inicio-beneficios" onchange="atualizarBeneficios()">
-                <input type="date" id="data-fim-beneficios" onchange="atualizarBeneficios()">
-            </div>
-            <select id="filtro-beneficio" class="filtro-select" onchange="atualizarBeneficios()">
-                <option value="todos">Todos</option><option value="VR">VR</option><option value="VA">VA</option><option value="Combustível">Combustível</option><option value="Outros">Outros</option>
-            </select>
-            <div id="lista-beneficios"></div>
-        </div>
-    </div>
-</div>
-
-<div class="app-view" id="view-graficos">
-    <div class="secao-conteudo">
-        <h4>Comparativo do Mês</h4>
-        <div class="colunas-container">
-            <div><span id="v-val-contas">R$ 0.00</span><div class="coluna-vertical-barra" id="v-bar-contas" style="background: var(--saida);"></div><span>Saídas</span></div>
-            <div><span id="v-val-cartoes">R$ 0.00</span><div class="coluna-vertical-barra" id="v-bar-cartoes" style="background: var(--cartao);"></div><span>Cartões</span></div>
-            <div><span id="v-val-reserva">R$ 0.00</span><div class="coluna-vertical-barra" id="v-bar-reserva" style="background: var(--reserva-cor);"></div><span>Reserva</span></div>
-        </div>
-    </div>
-    <div class="secao-conteudo">
-        <h4>Proporção</h4>
-        <div class="donut-chart" id="grafico-pizza-elemento"><div class="donut-hole"><span id="pizza-perc">0%</span></div></div>
-    </div>
-</div>
-
-<div class="app-view" id="view-config">
-    <div class="secao-conteudo">
-        <h4>Gerenciamento de Dados</h4>
-        <button class="config-btn-bloco" onclick="exportarBackup()">📥 Exportar</button>
-        <button class="config-btn-bloco" onclick="document.getElementById('input-file-backup').click()">📤 Importar</button>
-        <input type="file" id="input-file-backup" accept=".json" style="display: none;" onchange="importarBackup(event)">
-        <button class="config-btn-bloco" style="color:var(--saida);" onclick="resetarAplicativoTotal()">🗑️ Limpar Tudo</button>
-    </div>
-</div>
-
-<div class="menu-rodape-wrapper">
-    <div class="menu-rodape">
-    <button class="tab-item ativo" onclick="navegarPara('inicio')"><span>💬</span><span>Conversa</span></button>
-
-    <button class="tab-item" onclick="navegarPara('historico')"><span>📝</span><span>Histórico</span></button>
-
-    <button class="tab-item" onclick="navegarPara('graficos')"><span>📊</span><span>Status</span></button>
-
-    <button class="tab-item" onclick="navegarPara('beneficios')"><span>🎁</span><span>Benefícios</span></button>
-
-    <button class="tab-item" onclick="navegarPara('config')"><span>⚙️</span><span>Config</span></button>
-</div>
-</div>
-</div>
-
-<!-- MODAL PERGUNTA CONTA -->
-<div class="modal-overlay" id="modal-pergunta">
-    <div class="modal-container">
-        <h3 id="texto-pergunta"></h3>
-        <div id="botoes-pergunta"></div>
-        <div class="modal-botoes" style="margin-top:12px;">
-            <button class="btn-acao-modal btn-cancelar" onclick="cancelarPergunta()">Cancelar</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL SELECIONAR MÊS RÁPIDO -->
-<div class="modal-overlay" id="modal-seletor-mes">
-    <div class="modal-container">
-        <h3>Selecione o Mês / Ano</h3>
-        <div class="grid-meses-modal" id="grid-meses-container"></div>
-        <div class="modal-botoes" style="margin-top: 16px;">
-            <button class="btn-acao-modal btn-cancelar" onclick="fecharModalSeletorMes()">Fechar</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL BENEFÍCIO -->
-<div class="modal-overlay" id="modal-beneficio">
-    <div class="modal-container">
-        <h3 id="titulo-modal-beneficio">Lançar Benefício</h3>
-        <input type="hidden" id="beneficio-id">
-        <input type="hidden" id="beneficio-operacao">
-        <div class="form-grupo" style="margin-top:12px;"><label>Benefício</label><select id="beneficio-tipo"><option value="VR">VR</option><option value="VA">VA</option><option value="Combustível">Combustível</option><option value="Outros">Outros</option></select></div>
-        <div class="form-grupo"><label>Valor (R$)</label><input type="number" step="0.01" id="beneficio-valor"></div>
-        <div class="form-grupo"><label>Descrição</label><input type="text" id="beneficio-desc" placeholder="Ex: crédito mensal, abastecimento..."></div>
-        <div class="modal-botoes"><button class="btn-acao-modal btn-excluir" id="btn-excluir-beneficio-modal" style="display:none;" onclick="excluirBeneficioModal()">Excluir</button><button class="btn-acao-modal btn-cancelar" onclick="fecharModalBeneficio()">Cancelar</button><button class="btn-acao-modal btn-salvar" onclick="salvarBeneficioModal()">Salvar</button></div>
-    </div>
-</div>
-
-<!-- MODAL EDITAR/EXCLUIR TRANSAÇÃO -->
-<div class="modal-overlay" id="modal-editar">
-    <div class="modal-container">
-        <h3>Editar Transação</h3>
-        <input type="hidden" id="edit-id">
-        <div class="form-grupo" style="margin-top: 12px;">
-            <label>Descrição</label>
-            <input type="text" id="edit-desc">
-        </div>
-        <div class="form-grupo">
-            <label>Valor (R$)</label>
-            <input type="number" step="0.01" id="edit-valor">
-        </div>
-        <div class="form-grupo">
-            <label>Tipo</label>
-            <select id="edit-tipo">
-                <option value="entrada">Entrada</option>
-                <option value="saida">Saída</option>
-                <option value="cartao">Cartão</option>
-                <option value="reserva">Reserva</option>
-                <option value="ajuste">Ajuste de saldo</option>
-            </select>
-        </div>
-        <div class="form-grupo">
-            <label>Conta / Cartão / Origem</label>
-            <input type="text" id="edit-origem" placeholder="Ex: Nubank, Itaú, Mercado Pago, Bradesco, PicPay,Dinheiro...">
-        </div>
-        <div class="modal-botoes">
-            <button class="btn-acao-modal btn-excluir" onclick="excluirTransacaoModal()">Excluir</button>
-            <button class="btn-acao-modal btn-cancelar" onclick="fecharModalEditar()">Cancelar</button>
-            <button class="btn-acao-modal btn-salvar" onclick="salvarEdicaoModal()">Salvar</button>
-        </div>
-    </div>
+  </div>
 </div>
 
 <script>
-let transacoes = [], beneficios = [], saldosOcultos = false, idPendente = null, tipoPendente = null, aguardandoParcelas = false;
-let anoAtualGlobal = new Date().getFullYear();
-let mesAtualGlobal = new Date().getMonth();
-let temasDisponiveis = ['padrao', 'escuro', 'white', 'vintage']; let temaAtualIndex = 0;
-const nomesMeses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-const nomesMesesCompletos = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-
-function navegarPara(idAba) {
-    document.querySelectorAll('.app-view').forEach(v => v.classList.remove('ativa'));
-    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('ativo'));
-    document.getElementById(`view-${idAba}`).classList.add('ativa');
-    const alvo = (typeof event !== 'undefined' && event && event.target) ? event.target.closest('.tab-item') : null;
-    if (alvo) alvo.classList.add('ativo');
-    else document.querySelector(`.tab-item[onclick="navegarPara('${idAba}')"]`)?.classList.add('ativo');
-    atualizarAplicativo();
-}
-
-function atualizarLabelTopo() {
-    document.getElementById('label-mes-topo').innerHTML = `📅 ${nomesMesesCompletos[mesAtualGlobal]} de ${anoAtualGlobal}`;
-}
-
-function mudarMes(direcao) {
-    mesAtualGlobal += direcao;
-    if (mesAtualGlobal > 11) {
-        mesAtualGlobal = 0;
-        anoAtualGlobal++;
-    } else if (mesAtualGlobal < 0) {
-        mesAtualGlobal = 11;
-        anoAtualGlobal--;
-    }
-    atualizarAplicativo();
-}
-
-function abrirModalSeletorMes() {
-    const container = document.getElementById('grid-meses-container');
-    let html = '';
-    
-    // Lista os últimos anos e próximos anos com base nas transações ou padrão atual
-    let anosEnvolvidos = new Set([new Date().getFullYear(), anoAtualGlobal]);
-    transacoes.forEach(t => anosEnvolvidos.add(t.ano));
-    
-    const anosArray = Array.from(anosEnvolvidos).sort();
-
-    anosArray.forEach(ano => {
-        for (let m = 0; m < 12; m++) {
-            let ativoCls = (m === mesAtualGlobal && ano === anoAtualGlobal) ? 'ativo' : '';
-            html += `<button class="btn-mes-grid ${ativoCls}" onclick="selecionarMesAno(${m}, ${ano})">${nomesMeses[m]}/${ano}</button>`;
-        }
-    });
-
-    container.innerHTML = html;
-    document.getElementById('modal-seletor-mes').style.display = 'flex';
-}
-
-function fecharModalSeletorMes() {
-    document.getElementById('modal-seletor-mes').style.display = 'none';
-}
-
-function selecionarMesAno(m, ano) {
-    mesAtualGlobal = m;
-    anoAtualGlobal = ano;
-    fecharModalSeletorMes();
-    atualizarAplicativo();
-}
-
-function enviarComando() {
-    const campo = document.getElementById('campo-texto');
-    if (!campo) return;
-    campo.blur();
-    processarComando();
-}
-
-const campoComando = document.getElementById('campo-texto');
-if (campoComando) {
-    campoComando.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.keyCode === 13) {
-            e.preventDefault();
-            e.stopPropagation();
-            enviarComando();
-        }
-    });
-}
-
-function detectarBeneficio(txt) {
-    if (/\b(vr|vale refeição|vale-refeição)\b/.test(txt)) return 'VR';
-    if (/\b(va|vale alimentação|vale-alimentacao|vale-alimentação)\b/.test(txt)) return 'VA';
-    if (/\b(combust[ií]vel|gasolina|abastec(?:i|e|ei|imento))\b/.test(txt) && /\b(benef[ií]cio|vale|recebi|gastei|usei|abasteci|cr[eé]dito)\b/.test(txt)) return 'Combustível';
-    if (/\b(outros|outro benefício|outro beneficio)\b/.test(txt)) return 'Outros';
-    return null;
-}
-
-function processarComando() {
-    const input = document.getElementById('campo-texto'); const txt = input.value.trim().toLowerCase();
-    const num = txt.match(/\d+([.,]\d+)?/g); if (!num) return alert("Digite um valor");
-    const valor = parseFloat(num[0].replace(',', '.'));
-    const beneficio = detectarBeneficio(txt);
-
-    if (beneficio) {
-        let operacao = /\b(gastei|usei|utilizei|pagamento|paguei|abasteci|consumi|saiu|sai)\b/.test(txt) ? 'saida' : 'entrada';
-        if (/\b(n[aã]o|sem)\b/.test(txt) && /\bbenef[ií]cio\b/.test(txt)) operacao = 'saida';
-        const desc = input.value.replace(num[0], '').replace(/\b(vr|va|combust[ií]vel|gasolina|vale|benef[ií]cio|recebi|gastei|usei|utilizei|paguei|abasteci|abastecimento|de|do|da|no|na|em|com)\b/gi, ' ').replace(/\s+/g,' ').trim() || (operacao === 'entrada' ? 'Crédito de benefício' : 'Uso de benefício');
-        beneficios.unshift({ id: Date.now(), tipo: beneficio, operacao, valor, descricao: desc, mes: mesAtualGlobal, ano: anoAtualGlobal, dia: new Date().getDate() });
-        salvarBeneficios();
-        input.value = '';
-        navegarPara('beneficios');
-        return;
-    }
-
-    // Saldo/Ajuste é uma conciliação, não uma saída.
-    // "saldo +100" aumenta R$100; "saldo -100" reduz R$100.
-    let tipo = 'saida';
-    const ehAjuste = /\b(saldo|ajuste|ajustar|acerto|acertar)\b/.test(txt);
-    const valorComSinal = txt.match(/(?:saldo|ajuste|ajustar|acerto|acertar)\s*([+-])\s*\d+[.,]?\d*/i);
-
-    if (ehAjuste) {
-        tipo = 'ajuste';
-        valor = valorComSinal && valorComSinal[1] === '-' ? -Math.abs(valor) : Math.abs(valor);
-    } else if (/\b(reserva|guardar)\b/.test(txt)) tipo = 'reserva';
-    else if (/\b(cartao|cartão|credito)\b/.test(txt)) tipo = 'cartao';
-    else if (/\b(recebi|ganhei|salario|salário|pix|deposito|depósito|renda)\b/.test(txt)) tipo = 'entrada';
-
-    let conta = "", cartao = "";
-    if(txt.includes('nubank')) { if(tipo==='cartao') cartao = "Nubank"; else conta = "Nubank"; }
-    if(txt.includes('itau')) { if(tipo==='cartao') cartao = "Itaú"; else conta = "Itaú"; }
-    if(txt.includes('inter')) { if(tipo==='cartao') cartao = "Inter"; else conta = "Inter"; }
-    if(txt.includes('mp')) { if(tipo==='cartao') cartao = "Mercado Pago"; else conta = "Mercado Pago"; }
-
-    let desc = input.value.replace(num[0], '').replace(/\b\d{1,2}\s*x\b/gi, '').replace(/no|na|do|da/gi, '').trim() || "Lançamento";
-    const novoId = Date.now();
-    transacoes.unshift({ id: novoId, descricao: desc, valor: valor, tipo, conta, cartao, mes: mesAtualGlobal, ano: anoAtualGlobal, dia: new Date().getDate() });
-    if (tipo === 'ajuste') {
-        idPendente = novoId;
-        tipoPendente = tipo;
-        mostrarPerguntaConta(novoId, tipo);
-        input.value = '';
-        return;
-    }
-    // Cartão sempre passa pelo fluxo de cartão -> parcelas. Se o cartão já foi informado no texto, pulamos apenas a pergunta do cartão.
-    if(tipo === 'cartao') {
-        idPendente = novoId; tipoPendente = tipo;
-        if(cartao) mostrarPerguntaParcelas(novoId);
-        else mostrarPerguntaConta(novoId, tipo);
-    }
-    else if((tipo === 'saida' || tipo === 'reserva') && !cartao && !conta){ idPendente = novoId; tipoPendente = tipo; mostrarPerguntaConta(novoId, tipo); }
-    else if(tipo === 'entrada' && !conta){ idPendente = novoId; tipoPendente = tipo; mostrarPerguntaConta(novoId, tipo); }
-    else salvarTudo();
-    input.value = '';
-}
-
-function salvarBeneficios() {
-    try {
-        localStorage.setItem('saldo_beneficios', JSON.stringify(beneficios));
-        atualizarBeneficios();
-    } catch (erro) {
-        console.error('Erro ao salvar benefícios:', erro);
-        alert('Não foi possível salvar os benefícios.');
-    }
-}function dataLancamento(x) { return new Date(Number(x.ano), Number(x.mes), Number(x.dia || 1)); }
-function periodoSelecionado(id) {
-    const v = document.getElementById(id).value; if (!v) return null;
-    const hoje = new Date(); hoje.setHours(0,0,0,0);
-    if (v === 'hoje') return [hoje, hoje];
-    if (v === '7dias') { const ini=new Date(hoje); ini.setDate(ini.getDate()-6); return [ini, hoje]; }
-    if (v === 'mes') return [new Date(hoje.getFullYear(),hoje.getMonth(),1), new Date(hoje.getFullYear(),hoje.getMonth()+1,0)];
-    if (v === 'mesAnterior') return [new Date(hoje.getFullYear(),hoje.getMonth()-1,1), new Date(hoje.getFullYear(),hoje.getMonth(),0)];
-    const ini=document.getElementById(id.includes('beneficios')?'data-inicio-beneficios':'data-inicio-despesas').value;
-    const fim=document.getElementById(id.includes('beneficios')?'data-fim-beneficios':'data-fim-despesas').value;
-    return ini && fim ? [new Date(ini+'T00:00:00'), new Date(fim+'T23:59:59')] : null;
-}
-function obterBeneficiosFiltrados() { const p=periodoSelecionado('filtro-periodo-beneficios'); return p ? beneficios.filter(b=>{const d=dataLancamento(b); return d>=p[0]&&d<=p[1];}) : []; }
-function alternarHistorico(tipo) {
-    const painel = document.getElementById(`painel-historico-${tipo}`);
-    const seta = document.getElementById(`seta-historico-${tipo}`);
-    const aberto = painel.style.display !== 'none';
-    painel.style.display = aberto ? 'none' : 'block';
-    seta.innerText = aberto ? '▸' : '▾';
-
-    // Ao abrir o histórico, aplica imediatamente o período padrão (Este mês).
-    // Não depende de o usuário alterar o seletor para disparar o filtro.
-    if (!aberto) {
-        const filtro = document.getElementById(`filtro-periodo-${tipo}`);
-        if (filtro && !filtro.value) filtro.value = 'mes';
-        if (tipo === 'despesas') atualizarAplicativo();
-        if (tipo === 'beneficios') atualizarBeneficios();
-    }
-}
-function selecionarBeneficio(tipo) {
-    const filtro = document.getElementById('filtro-beneficio');
-    const detalhe = document.getElementById('detalhe-beneficio');
-    document.querySelectorAll('.beneficio-card.clicavel').forEach(c => c.classList.toggle('selecionado', c.dataset.beneficio === tipo));
-    if (tipo === 'todos') { filtro.value = 'todos'; detalhe.style.display = 'none'; }
-    else {
-        filtro.value = tipo; detalhe.style.display = 'block';
-        document.getElementById('titulo-detalhe-beneficio').innerText = `Detalhes — ${tipo}`;
-        const t = calcularTotaisBeneficio(tipo);
-        document.getElementById('subtitulo-detalhe-beneficio').innerText = `Saldo R$ ${formatarMoeda(t[0]-t[1])} · Recebido R$ ${formatarMoeda(t[0])} · Utilizado R$ ${formatarMoeda(t[1])}`;
-    }
-    atualizarBeneficios();
-}
-function calcularTotaisBeneficio(tipo) {
-    const totais=[0,0];
-    const p=periodoSelecionado('filtro-periodo-beneficios');
-    const base=p ? obterBeneficiosFiltrados() : beneficios.filter(b => b.mes === mesAtualGlobal && b.ano === anoAtualGlobal);
-    base.filter(b=>b.tipo===tipo).forEach(b=>{ totais[b.operacao==='entrada'?0:1]+=Number(b.valor)||0; });
-    return totais;
-}
-function formatarMoeda(v) { return Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-function atualizarBeneficios() {
-    const sel=document.getElementById('filtro-periodo-beneficios'); const datas=document.getElementById('datas-personalizadas-beneficios'); datas.style.display=sel.value==='personalizado'?'grid':'none';
-    const lista = obterBeneficiosFiltrados();
-    const resumo = beneficios.filter(b => b.mes === mesAtualGlobal && b.ano === anoAtualGlobal);
-    const tipos = ['VR','VA','Combustível','Outros'];
-    const totais = { 'VR': [0,0], 'VA': [0,0], 'Combustível': [0,0], 'Outros': [0,0] };
-    resumo.forEach(b => { const i=b.operacao==='entrada'?0:1; if(totais[b.tipo]) totais[b.tipo][i]+=Number(b.valor)||0; });
-    tipos.forEach(tipo => {
-        const [rec,uso]=totais[tipo];
-        document.getElementById(`saldo-${tipo}`).innerText=`R$ ${formatarMoeda(rec-uso)}`;
-        document.getElementById(`recebido-${tipo}`).innerText=`R$ ${formatarMoeda(rec)}`;
-        document.getElementById(`utilizado-${tipo}`).innerText=`R$ ${formatarMoeda(uso)}`;
-    });
-    atualizarBloqueioValores();
-    const filtro=document.getElementById('filtro-beneficio').value;
-    const filtradas=lista.filter(b=>filtro==='todos'||b.tipo===filtro);
-    const l=document.getElementById('lista-beneficios'); l.innerHTML='';
-    if(!filtradas.length){ l.innerHTML='<div style="text-align:center;color:var(--texto-secundario);padding:20px;">Nenhum lançamento de benefício neste período.</div>'; return; }
-    filtradas.forEach(b=>{ l.innerHTML += `<div class="item-transacao" style="cursor:pointer;" onclick="abrirModalEditarBeneficio(${b.id})">
-        <div class="linha-1"><span>${b.descricao} <span class="badge-beneficio">${b.tipo}</span></span><span class="${b.operacao==='entrada'?'cor-entrada':'cor-saida'}">${b.operacao==='entrada'?'+':'-'} R$ ${b.valor.toFixed(2)}</span></div>
-        <div class="linha-2">${b.dia} ${nomesMeses[b.mes]}/${b.ano}</div>
-    </div>`; });
-}
-function abrirModalNovoBeneficio(op){ document.getElementById('beneficio-id').value=''; document.getElementById('btn-excluir-beneficio-modal').style.display='none'; document.getElementById('beneficio-operacao').value=op; document.getElementById('titulo-modal-beneficio').innerText=op==='entrada'?'Receber Benefício':'Utilizar Benefício'; document.getElementById('beneficio-valor').value=''; document.getElementById('beneficio-desc').value=''; document.getElementById('modal-beneficio').style.display='flex'; }
-function abrirModalEditarBeneficio(id){ const b=beneficios.find(x=>x.id==id); if(!b)return; document.getElementById('btn-excluir-beneficio-modal').style.display='block'; document.getElementById('beneficio-id').value=b.id; document.getElementById('beneficio-operacao').value=b.operacao; document.getElementById('titulo-modal-beneficio').innerText='Editar Benefício'; document.getElementById('beneficio-tipo').value=b.tipo; document.getElementById('beneficio-valor').value=b.valor; document.getElementById('beneficio-desc').value=b.descricao; document.getElementById('modal-beneficio').style.display='flex'; }
-function fecharModalBeneficio(){document.getElementById('modal-beneficio').style.display='none';}
-function salvarBeneficioModal(){ const id=document.getElementById('beneficio-id').value; const op=document.getElementById('beneficio-operacao').value; const tipo=document.getElementById('beneficio-tipo').value; const valor=parseFloat(document.getElementById('beneficio-valor').value)||0; if(valor<=0)return alert('Informe um valor válido.'); const desc=document.getElementById('beneficio-desc').value|| (op==='entrada'?'Crédito de benefício':'Uso de benefício'); if(id){const b=beneficios.find(x=>x.id==id); if(b){b.tipo=tipo;b.operacao=op;b.valor=valor;b.descricao=desc;}} else beneficios.unshift({id:Date.now(),tipo,operacao:op,valor,descricao:desc,mes:mesAtualGlobal,ano:anoAtualGlobal,dia:new Date().getDate()}); fecharModalBeneficio(); salvarBeneficios();}
-function excluirBeneficio(id){ if(confirm('Excluir este benefício?')){beneficios=beneficios.filter(b=>b.id!=id);salvarBeneficios();} }
-function excluirBeneficioModal(){ const id=document.getElementById('beneficio-id').value; if(id) { excluirBeneficio(id); fecharModalBeneficio(); } }
-
-function mostrarPerguntaConta(id, tipo) {
-    const modal = document.getElementById('modal-pergunta');
-    let texto = "";
-    if(tipo === 'cartao'){ texto = "Em qual cartão foi essa compra?"; }
-    else if(tipo === 'reserva'){ texto = "Transferir de qual conta pra Reserva?"; }
-    else if(tipo === 'entrada'){ texto = "Em qual conta você recebeu?"; }
-    else if(tipo === 'ajuste'){ texto = "Em qual conta está esse saldo?"; }
-    else { texto = "De qual conta saiu esse dinheiro?"; }
-
-    document.getElementById('texto-pergunta').innerText = texto;
-    document.getElementById('botoes-pergunta').innerHTML = `
-        <button class="btn-resposta" onclick="responderConta('${id}','Nubank')">Nubank</button>
-        <button class="btn-resposta" onclick="responderConta('${id}','Itaú')">Itaú</button>
-        <button class="btn-resposta" onclick="responderConta('${id}','Inter')">Inter</button>
-         <button class="btn-resposta" onclick="responderConta('${id}','Mercado Pago')">MP</button>
-          <button class="btn-resposta" onclick="responderConta('${id}','Bradesco')">Bradesco</button>
-           <button class="btn-resposta" onclick="responderConta('${id}','Pic Pay')">Pic Pay</button>
-        <button class="btn-resposta" onclick="responderConta('${id}','Dinheiro')">Dinheiro</button>
-    `;
-    modal.style.display = 'flex';
-}
-
-function responderConta(id, valor) {
-    const t = transacoes.find(i => i.id == id);
-    if(t) {
-        if(tipoPendente === 'cartao') {
-            t.cartao = valor;
-            document.getElementById('modal-pergunta').style.display = 'none';
-            mostrarPerguntaParcelas(id);
-            return;
-        }
-        else t.conta = valor;
-    }
-    document.getElementById('modal-pergunta').style.display = 'none'; 
-    salvarTudo();
-}
-
-function mostrarPerguntaParcelas(id) {
-    idPendente = id; aguardandoParcelas = true;
-    const modal = document.getElementById('modal-pergunta');
-    document.getElementById('texto-pergunta').innerText = 'Em quantas vezes foi essa compra?';
-    let html = '';
-    for(let i=1;i<=24;i++) html += `<button class="btn-resposta" onclick="responderParcelas('${id}',${i})">${i}x</button>`;
-    document.getElementById('botoes-pergunta').innerHTML = html;
-    modal.style.display = 'flex';
-}
-
-function responderParcelas(id, quantidade) {
-    const t = transacoes.find(i => i.id == id);
-    if(!t) return;
-    document.getElementById('modal-pergunta').style.display = 'none';
-    aguardandoParcelas = false;
-
-    if(quantidade <= 1) {
-        t.parcela = 1; t.totalParcelas = 1; t.compraParceladaId = null;
-        salvarTudo();
-        return;
-    }
-
-    const totalCentavos = Math.round(Number(t.valor) * 100);
-    const baseCentavos = Math.floor(totalCentavos / quantidade);
-    const resto = totalCentavos - (baseCentavos * quantidade);
-    const compraId = `parc-${Date.now()}`;
-    const dataBase = new Date(Number(t.ano), Number(t.mes), Number(t.dia || 1));
-    const parcelas = [];
-
-    // Remove o lançamento original e substitui pelas parcelas vinculadas.
-    transacoes = transacoes.filter(i => i.id != id);
-    for(let i=1;i<=quantidade;i++) {
-        const d = new Date(dataBase.getFullYear(), dataBase.getMonth() + (i-1), dataBase.getDate());
-        // Se o dia não existir no mês (ex.: 31), usa o último dia daquele mês.
-        if(d.getMonth() !== ((dataBase.getMonth() + (i-1)) % 12 + 12) % 12) {
-            d.setDate(0);
-        }
-        const centavos = baseCentavos + (i <= resto ? 1 : 0);
-        parcelas.push({
-            id: `${compraId}-${i}`,
-            compraParceladaId: compraId,
-            parcela: i,
-            totalParcelas: quantidade,
-            descricao: `${t.descricao} (${i}/${quantidade})`,
-            valor: centavos / 100,
-            tipo: 'cartao',
-            conta: '',
-            cartao: t.cartao || '',
-            mes: d.getMonth(),
-            ano: d.getFullYear(),
-            dia: d.getDate()
-        });
-    }
-    transacoes = parcelas.concat(transacoes);
-    salvarTudo();
-}
-
-function salvarTudo() { localStorage.setItem('saldo_transacoes', JSON.stringify(transacoes)); atualizarAplicativo(); }
-
-function obterTransacoesFiltradas() {
-    return transacoes.filter(t => t.mes === mesAtualGlobal && t.ano === anoAtualGlobal);
-}
-
-function atualizarAplicativo() {
-    atualizarLabelTopo();
-    const transacoesFiltradas = obterTransacoesFiltradas();
-
-    let ent = 0, sai = 0, car = 0, res = 0;
-    transacoesFiltradas.forEach(t => {
-        if(t.tipo === 'entrada') ent += t.valor;
-        else if(t.tipo === 'saida') sai += t.valor;
-        else if(t.tipo === 'cartao') car += t.valor;
-        else if(t.tipo === 'reserva') res += t.valor;
-        else if(t.tipo === 'ajuste') ent += t.valor;
-    });
-    const saldo = ent - sai - car - res; const gastos = sai + car;
-    document.getElementById('card-entradas').innerText = ent.toFixed(2);
-    document.getElementById('card-saidas').innerText = sai.toFixed(2);
-    document.getElementById('card-cartao').innerText = car.toFixed(2);
-    document.getElementById('card-reserva').innerText = res.toFixed(2);
-    document.getElementById('card-saldo').innerText = `R$ ${saldo.toFixed(2)}`;
-    document.getElementById('previsao-valor').innerText = `R$ ${(gastos / 30).toFixed(2)}`;
-    renderizarHistorico(transacoesFiltradas); 
-    renderizarGraficos(ent, gastos, sai, car, res);
-    atualizarBeneficios();
-}
-
-function renderizarHistorico(listaTransacoes) {
-    const tipoFiltro = document.getElementById('filtro-tipo').value;
-    const l = document.getElementById('lista-transacoes-container'); 
-    l.innerHTML = '';
-    
-    const p=periodoSelecionado('filtro-periodo-despesas');
-    document.getElementById('datas-personalizadas-despesas').style.display=document.getElementById('filtro-periodo-despesas').value==='personalizado'?'grid':'none';
-    const porPeriodo=p ? listaTransacoes.filter(t=>{const d=dataLancamento(t); return d>=p[0]&&d<=p[1];}) : [];
-    const filtradas = porPeriodo.filter(t => tipoFiltro === 'todos' || t.tipo === tipoFiltro);
-
-    if (filtradas.length === 0) {
-        l.innerHTML = `<div style="text-align:center; color: var(--texto-secundario); padding: 20px;">Nenhuma transação neste período.</div>`;
-        return;
-    }
-
-    filtradas.forEach(t => {
-        let cls = t.tipo === 'entrada' ? 'cor-entrada' : t.tipo === 'cartao' ? 'cor-cartao' : t.tipo === 'reserva' ? 'cor-reserva' : t.tipo === 'ajuste' ? (t.valor >= 0 ? 'cor-entrada' : 'cor-saida') : 'cor-saida';
-        let origem = t.cartao || t.conta || '';
-        const parcelaInfo = t.totalParcelas > 1 ? ` · ${t.parcela}/${t.totalParcelas}` : '';
-        const sinal = t.tipo === 'entrada' ? '+' : t.tipo === 'ajuste' ? (t.valor >= 0 ? '+' : '-') : '-';
-        const valorExibicao = Math.abs(Number(t.valor) || 0);
-        const rotuloAjuste = t.tipo === 'ajuste' ? ' · Ajuste' : '';
-        l.innerHTML += `<div class="item-transacao" style="cursor:pointer;" onclick="abrirModalEditar('${String(t.id).replace(/'/g, "\'")}')">
-            <div class="linha-1"><span>${t.descricao}${rotuloAjuste}</span><span class="${cls}">${sinal} R$ ${valorExibicao.toFixed(2)}</span></div>
-            <div class="linha-2">${t.dia} ${nomesMeses[t.mes]}/${t.ano}${parcelaInfo}${origem ? ' - ' + origem : ''}</div>
-        </div>`;
-    });
-}
-
-function abrirModalEditar(id) {
-    const t = transacoes.find(i => i.id == id);
-    if(!t) return;
-    document.getElementById('edit-id').value = t.id;
-    document.getElementById('edit-desc').value = t.descricao;
-    document.getElementById('edit-valor').value = t.valor;
-    document.getElementById('edit-tipo').value = t.tipo;
-    document.getElementById('edit-origem').value = t.cartao || t.conta || '';
-    document.getElementById('modal-editar').style.display = 'flex';
-}
-
-function fecharModalEditar() {
-    document.getElementById('modal-editar').style.display = 'none';
-}
-
-function salvarEdicaoModal() {
-    const id = document.getElementById('edit-id').value;
-    const t = transacoes.find(i => i.id == id);
-    if(t) {
-        t.descricao = document.getElementById('edit-desc').value || "Lançamento";
-        let valorEditado = parseFloat(document.getElementById('edit-valor').value) || 0;
-        t.tipo = document.getElementById('edit-tipo').value;
-        t.valor = t.tipo === 'ajuste' ? valorEditado : Math.abs(valorEditado);
-        const origemVal = document.getElementById('edit-origem').value;
-        if(t.tipo === 'cartao') {
-            t.cartao = origemVal;
-            t.conta = "";
-        } else {
-            t.conta = origemVal;
-            t.cartao = "";
-        }
-    }
-    fecharModalEditar();
-    salvarTudo();
-}
-
-function excluirTransacaoRapido(id) {
-    const t = transacoes.find(i => i.id == id);
-    if (!t) return;
-    let mensagem = 'Deseja realmente excluir esta transação?';
-    if (t.compraParceladaId && t.totalParcelas > 1) {
-        mensagem = `Excluir somente a parcela ${t.parcela}/${t.totalParcelas}?\n\nPara excluir a compra inteira, abra a edição da parcela e confirme a exclusão em seguida.`;
-    }
-    if (confirm(mensagem)) {
-        transacoes = transacoes.filter(i => i.id != id);
-        salvarTudo();
-    }
-}
-
-function excluirTransacaoModal() {
-    if(confirm("Deseja realmente excluir esta transação?")) {
-        const id = document.getElementById('edit-id').value;
-        transacoes = transacoes.filter(i => i.id != id);
-        fecharModalEditar();
-        salvarTudo();
-    }
-}
-
-function renderizarGraficos(receitas, totalGastos, saídas, cartões, valorReserva) {
-    const maxEixoV = Math.max(saídas, cartões, valorReserva, 100);
-    document.getElementById('v-val-contas').innerText = `R$ ${saídas.toFixed(2)}`;
-    document.getElementById('v-val-cartoes').innerText = `R$ ${cartões.toFixed(2)}`;
-    document.getElementById('v-val-reserva').innerText = `R$ ${valorReserva.toFixed(2)}`;
-    document.getElementById('v-bar-contas').style.height = `${Math.max((saídas / maxEixoV) * 100, 5)}%`;
-    document.getElementById('v-bar-cartoes').style.height = `${Math.max((cartões / maxEixoV) * 100, 5)}%`;
-    document.getElementById('v-bar-reserva').style.height = `${Math.max((valorReserva / maxEixoV) * 100, 5)}%`;
-
-    const totalFluxo = receitas + totalGastos; const percGasto = totalFluxo > 0 ? Math.round((totalGastos / totalFluxo) * 100) : 0;
-    document.getElementById('pizza-perc').innerText = `${percGasto}%`;
-    document.getElementById('grafico-pizza-elemento').style.background = `conic-gradient(var(--saida) 0% ${percGasto}%, var(--entrada) ${percGasto}% 100%)`;
-}
-
-function atualizarBloqueioValores() {
-    const idsValores = [
-        'card-entradas', 'card-saidas', 'card-cartao', 'card-reserva',
-        'card-saldo', 'previsao-valor',
-        'v-val-contas', 'v-val-cartoes', 'v-val-reserva',
-        'saldo-VR', 'recebido-VR', 'utilizado-VR',
-        'saldo-VA', 'recebido-VA', 'utilizado-VA',
-        'saldo-Combustível', 'recebido-Combustível', 'utilizado-Combustível',
-        'saldo-Outros', 'recebido-Outros', 'utilizado-Outros'
-    ];
-
-    idsValores.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.toggle('valor-oculto', saldosOcultos);
-    });
-
-    const botao = document.querySelector('.app-header .icon-btn');
-    if (botao) botao.innerText = saldosOcultos ? '🔒' : '🔓';
-}
-
-function alternarVisibilidade() {
-    saldosOcultos = !saldosOcultos;
-    atualizarBloqueioValores();
-}
-function alternarTema() { 
-    temaAtualIndex = (temaAtualIndex + 1) % temasDisponiveis.length; 
-    document.body.className = temaAtualIndex === 0 ? '' : `theme-${temasDisponiveis[temaAtualIndex]}`; 
-}
-
-function resetarAplicativoTotal() { 
-    if (confirm("Limpar tudo?")) { 
-        transacoes = []; beneficios = [];
-        salvarTudo(); salvarBeneficios(); 
-    } 
-}
-
-function exportarBackup() { 
-    const dl = document.createElement('a'); 
-    dl.href = "data:text/json," + encodeURIComponent(JSON.stringify({ versao: 2, transacoes, beneficios })); 
-    dl.download = `backup.json`; 
-    dl.click(); 
-}
-
-function importarBackup(e) { 
-    const r = new FileReader(); 
-    r.onload = ev => { 
-        const dados = JSON.parse(ev.target.result);
-        if (Array.isArray(dados)) { transacoes = dados; beneficios = []; } else { transacoes = dados.transacoes || []; beneficios = dados.beneficios || []; }
-        salvarTudo(); salvarBeneficios(); 
-    }; 
-    r.readAsText(e.target.files[0]); 
-}
-
-
-// ===== RETORNO / ESC / BOTÃO VOLTAR =====
-let historicoNavegacao = ['inicio'];
-
-function modalAberto() {
-    return Array.from(document.querySelectorAll('.modal-overlay'))
-        .find(m => getComputedStyle(m).display !== 'none');
-}
-
-function cancelarPergunta() {
-    const id = idPendente;
-    if (id !== null) {
-        transacoes = transacoes.filter(i => i.id != id);
-        localStorage.setItem('saldo_transacoes', JSON.stringify(transacoes));
-    }
-    idPendente = null;
-    tipoPendente = null;
-    aguardandoParcelas = false;
-    document.getElementById('modal-pergunta').style.display = 'none';
-    atualizarAplicativo();
-}
-
-function fecharModalAtual() {
-    const modal = modalAberto();
-    if (!modal) return false;
-    if (modal.id === 'modal-pergunta') cancelarPergunta();
-    else if (modal.id === 'modal-seletor-mes') fecharModalSeletorMes();
-    else if (modal.id === 'modal-beneficio') fecharModalBeneficio();
-    else if (modal.id === 'modal-editar') fecharModalEditar();
-    else modal.style.display = 'none';
-    return true;
-}
-
-const navegarParaBase = navegarPara;
-let navegacaoInterna = false;
-
-navegarPara = function(idAba) {
-    const atual = historicoNavegacao[historicoNavegacao.length - 1];
-    if (!navegacaoInterna && atual !== idAba) {
-        historicoNavegacao.push(idAba);
-        history.pushState({ aba: idAba }, '', '#' + idAba);
-    }
-    navegarParaBase(idAba);
+let dados = JSON.parse(localStorage.getItem('tarefas_simples') || 'null') || {
+  pin: '1234', valor: 1.99, filhas: [], tarefas: [], feitos: {}
 };
+let souPais = false, aba = 'filhas', avatarSel='👧', iconeSel='🍽️', paraSel='todas', diasSel=[1,2,3,4,5], diaVendo = new Date().getDay();
+if(diaVendo<1||diaVendo>5) diaVendo=1;
+let codigoBackupAtual='';
 
-window.addEventListener('keydown', function(e) {
-    if (e.key !== 'Escape') return;
-    if (fecharModalAtual()) {
-        e.preventDefault();
-        return;
-    }
-    if (historicoNavegacao.length > 1) {
-        history.back();
-        e.preventDefault();
-    }
-});
+function salvar(){ localStorage.setItem('tarefas_simples', JSON.stringify(dados)); render(); }
+function toast(m){ const t=document.getElementById('toast'); document.getElementById('toast-msg').textContent=m; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'),4000); }
+function abrir(id){ document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
+function fechar(id){ document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
+window.fechar=fechar;
 
-window.addEventListener('popstate', function() {
-    if (fecharModalAtual()) return;
+document.getElementById('data-hoje').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'short'});
 
-    if (historicoNavegacao.length > 1) {
-        historicoNavegacao.pop();
-        const anterior = historicoNavegacao[historicoNavegacao.length - 1] || 'inicio';
-        navegacaoInterna = true;
-        navegarParaBase(anterior);
-        navegacaoInterna = false;
-    } else {
-        // Evita que um toque acidental volte para fora do aplicativo.
-        history.pushState({ aba: 'inicio' }, '', '#inicio');
-    }
-});
+function irParaFilhas(){ aba='filhas'; souPais=false; document.getElementById('painel-pais').classList.add('hidden'); document.getElementById('btn-pais').textContent='🔒 Pais'; render(); }
+function abrirPais(){ if(souPais){ sairPais(); return; } document.getElementById('pin-input').value=''; document.getElementById('pin-erro').classList.add('hidden'); abrir('modal-pin'); }
+function confirmarPin(){ const v=document.getElementById('pin-input').value; if(v===dados.pin){ souPais=true; fechar('modal-pin'); document.getElementById('painel-pais').classList.remove('hidden'); document.getElementById('btn-pais').textContent='🔓 Sair'; toast('Modo Pais ativado!'); render(); } else { document.getElementById('pin-erro').classList.remove('hidden'); } }
+function sairPais(){ souPais=false; document.getElementById('painel-pais').classList.add('hidden'); document.getElementById('btn-pais').textContent='🔒 Pais'; render(); }
 
-if (!location.hash) {
-    history.replaceState({ aba: 'inicio' }, '', '#inicio');
+// FILHAS
+const AVATARES=['👧','🧒','🌟','🦋','🐱','🦄','🌸','👩'];
+function abrirModalFilha(){ document.getElementById('filha-nome').value=''; avatarSel=AVATARES[0]; document.getElementById('avatares').innerHTML=AVATARES.map(a=>`<button onclick="avatarSel='${a}';this.style.border='2px solid #4F46E5'" class="text-2xl p-2 bg-slate-100 rounded-xl">${a}</button>`).join(''); abrir('modal-filha'); }
+function salvarFilha(){ const nome=document.getElementById('filha-nome').value.trim(); if(!nome) return; dados.filhas.push({id:Date.now().toString(), nome, avatar:avatarSel, xp:0, pontos:0}); fechar('modal-filha'); salvar(); }
+
+// TAREFAS
+const ICONES=['🍽️','🧹','🗑️','🛏️','📚','📖','👕','🐕','🪴','🧽','✨'];
+function abrirModalTarefa(){ if(dados.filhas.length===0){ toast('Cadastre uma filha primeiro!'); return; } document.getElementById('tarefa-nome').value=''; iconeSel=ICONES[0]; paraSel='todas'; diasSel=[1,2,3,4,5]; renderFormTarefa(); abrir('modal-tarefa'); }
+function renderFormTarefa(){
+  document.getElementById('icones').innerHTML=ICONES.map(i=>`<button onclick="iconeSel='${i}';renderFormTarefa()" class="p-2 rounded-xl ${iconeSel===i?'bg-indigo-100 border-2 border-indigo-600':'bg-slate-100'}">${i}</button>`).join('');
+  let h=`<button onclick="paraSel='todas';renderFormTarefa()" class="px-3 py-1.5 rounded-xl text-xs font-extrabold ${paraSel==='todas'?'bg-indigo-600 text-white':'bg-slate-100'}">Todas</button>`;
+  h+=dados.filhas.map(f=>`<button onclick="paraSel='${f.id}';renderFormTarefa()" class="px-3 py-1.5 rounded-xl text-xs font-extrabold ${paraSel===f.id?'bg-indigo-600 text-white':'bg-slate-100'}">${f.avatar} ${f.nome}</button>`).join('');
+  document.getElementById('tarefa-para').innerHTML=h;
+  const dias=[['Seg',1],['Ter',2],['Qua',3],['Qui',4],['Sex',5]];
+  document.getElementById('tarefa-dias').innerHTML=dias.map(([n,d])=>`<button onclick="toggleDia(${d})" class="px-3 py-1.5 rounded-xl text-xs font-extrabold ${diasSel.includes(d)?'bg-indigo-600 text-white':'bg-slate-100'}">${n}</button>`).join('');
+}
+function toggleDia(d){ diasSel = diasSel.includes(d) ? diasSel.filter(x=>x!==d) : [...diasSel,d]; renderFormTarefa(); }
+function salvarTarefa(){ const nome=document.getElementById('tarefa-nome').value.trim(); if(!nome||diasSel.length===0) return; dados.tarefas.push({id:Date.now().toString(), nome, icone:iconeSel, para:paraSel, dias:diasSel}); fechar('modal-tarefa'); salvar(); toast('Tarefa salva!'); }
+
+// VALOR
+function abrirModalValor(){ document.getElementById('valor-input').value=dados.valor; abrir('modal-valor'); }
+function salvarValor(){ const v=parseFloat(document.getElementById('valor-input').value); if(!isNaN(v)){ dados.valor=v; } fechar('modal-valor'); salvar(); }
+
+function tarefasDaFilha(filhaId, dia){
+  return dados.tarefas.filter(t=> t.dias.includes(dia) && (t.para==='todas' || t.para===filhaId));
+}
+function statsFilha(id){ let tot=0, feito=0; [1,2,3,4,5].forEach(d=>{ tarefasDaFilha(id,d).forEach(t=>{ tot++; if(dados.feitos[`${t.id}_${id}_${d}`]) feito++; }); }); return {tot, feito, pct: tot?Math.round(feito/tot*100):0}; }
+
+function render(){
+  const abas=document.getElementById('abas');
+  abas.innerHTML = dados.filhas.map(f=>{ const s=statsFilha(f.id); return `<button onclick="aba='${f.id}';render()" class="shrink-0 px-3.5 py-2 rounded-2xl font-extrabold text-sm border ${aba===f.id?'bg-indigo-600 text-white':'bg-white'}">${f.avatar} ${f.nome} <span class="text-[11px] px-1.5 py-0.5 rounded-full ${aba===f.id?'bg-white/20':'bg-slate-100'}">${s.pct}%</span></button>`}).join('') + `<button onclick="aba='premios';render()" class="shrink-0 px-3.5 py-2 rounded-2xl font-extrabold text-sm border ${aba==='premios'?'bg-amber-500 text-white':'bg-white text-amber-600'}">🏆 Prêmios</button>`;
+
+  const tela=document.getElementById('tela');
+  if(aba==='premios'){
+    tela.innerHTML = `<div class="bg-amber-500 text-white rounded-3xl p-4 flex justify-between"><div><h2 class="font-black">🏆 Desafio 100%</h2><p class="text-xs font-bold text-amber-100">Semana 100% = 1 ponto</p></div><span class="bg-white/20 px-3 py-1.5 rounded-xl text-xs font-black">1 pt = R$ ${dados.valor.toFixed(2).replace('.',',')}</span></div>` + dados.filhas.map(f=>{ const s=statsFilha(f.id); return `<div class="bg-white rounded-2xl p-4 border space-y-2"><div class="flex justify-between"><div><span class="font-black text-sm">${f.avatar} ${f.nome}</span><p class="text-[11px] font-bold text-slate-400">${f.xp} XP • ${f.pontos} pt(s)</p></div><span class="font-black text-emerald-600">R$ ${(f.pontos*dados.valor).toFixed(2).replace('.',',')}</span></div><div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-amber-400" style="width:${s.pct}%"></div></div><p class="text-[11px] font-bold text-slate-500">${s.feito}/${s.tot} tarefas (${s.pct}%)</p></div>`}).join('') + (dados.filhas.length===0?`<p class="text-center text-xs font-bold text-slate-400 py-6">Nenhuma filha ainda. Entre em Pais > + Filha</p>`:'');
+    return;
+  }
+
+  const filha=dados.filhas.find(f=>f.id===aba);
+  if(!filha){
+    tela.innerHTML=`<div class="bg-white rounded-3xl p-8 text-center space-y-2"><div class="text-4xl">👨‍👩‍👧</div><h2 class="font-black">Nenhuma filha cadastrada</h2><p class="text-xs font-bold text-slate-400">Toque em 🔒 Pais > + Filha</p></div>`;
+    return;
+  }
+  const s=statsFilha(filha.id);
+  const diasHtml=[1,2,3,4,5].map(d=>{ const nomes=['','Seg','Ter','Qua','Qui','Sex']; return `<button onclick="diaVendo=${d};render()" class="flex-1 py-2 rounded-xl text-xs font-extrabold ${diaVendo===d?'bg-indigo-600 text-white':'text-slate-500'}">${nomes[d]}</button>`}).join('');
+  const lista=tarefasDaFilha(filha.id, diaVendo);
+  let tarefasHtml='';
+  if(lista.length===0) tarefasHtml=`<div class="bg-white rounded-3xl p-6 text-center"><p class="text-sm font-extrabold">Sem tarefas neste dia ✨</p></div>`;
+  else tarefasHtml=lista.map(t=>{ const chave=`${t.id}_${filha.id}_${diaVendo}`; const ok=!!dados.feitos[chave]; return `<div class="bg-white rounded-2xl p-3.5 border flex items-center justify-between ${ok?'border-emerald-300 bg-emerald-50/30':''}"><button onclick="marcar('${t.id}','${filha.id}',${diaVendo})" class="flex items-center gap-3 flex-1 text-left"><span class="w-6 h-6 rounded-lg border-2 flex items-center justify-center ${ok?'bg-emerald-500 border-emerald-500 text-white text-xs font-black':'border-slate-300'}">${ok?'✓':''}</span><span class="text-xl">${t.icone}</span><span class="font-extrabold text-sm ${ok?'line-through text-slate-400':''}">${t.nome}</span></button>${souPais?`<button onclick="excluirTarefa('${t.id}')" class="text-slate-400 px-1">🗑️</button>`:''}</div>`}).join('');
+
+  tela.innerHTML=`
+    <div class="bg-white rounded-3xl p-4 border space-y-3">
+      <div class="flex justify-between items-center"><div class="flex gap-2.5 items-center"><span class="text-3xl">${filha.avatar}</span><div><h2 class="font-black">${filha.nome} ${souPais?`<button onclick="excluirFilha('${filha.id}')" class="text-xs text-rose-500">🗑️</button>`:''}</h2><p class="text-xs font-bold text-slate-400">${filha.xp} XP</p></div></div><div class="text-right"><span class="font-black text-emerald-600">R$ ${(filha.pontos*dados.valor).toFixed(2).replace('.',',')}</span><p class="text-[11px] font-bold text-slate-400">${filha.pontos} pt(s)</p></div></div>
+      <div><div class="flex justify-between text-[11px] font-extrabold text-slate-400"><span>Semana</span><span>${s.feito}/${s.tot} (${s.pct}%)</span></div><div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden mt-1"><div class="h-full bg-indigo-600" style="width:${s.pct}%"></div></div></div>
+    </div>
+    <div class="bg-white p-1.5 rounded-2xl border flex gap-1">${diasHtml}</div>
+    <div class="space-y-2">${tarefasHtml}</div>
+  `;
 }
 
-function inicializarFiltrosHistorico() {
-    const fd = document.getElementById('filtro-periodo-despesas');
-    const fb = document.getElementById('filtro-periodo-beneficios');
-    if (fd) fd.value = 'mes';
-    if (fb) fb.value = 'mes';
+function marcar(tarefaId, filhaId, dia){
+  const chave=`${tarefaId}_${filhaId}_${dia}`;
+  const filha=dados.filhas.find(f=>f.id===filhaId);
+  if(dados.feitos[chave]){ delete dados.feitos[chave]; filha.xp=Math.max(0,filha.xp-10); } else { dados.feitos[chave]=true; filha.xp+=10; toast(`Muito bem, ${filha.nome}! +10 XP 💖`); }
+  salvar();
+}
+function excluirTarefa(id){ if(!souPais) return; dados.tarefas=dados.tarefas.filter(t=>t.id!==id); salvar(); }
+function excluirFilha(id){ if(!souPais) return; if(!confirm('Excluir essa filha?')) return; dados.filhas=dados.filhas.filter(f=>f.id!==id); aba='premios'; salvar(); }
+function fecharSemana(){
+  if(!souPais) return;
+  let msg='';
+  dados.filhas.forEach(f=>{ const s=statsFilha(f.id); if(s.tot>0 && s.pct===100){ f.pontos++; f.xp+=50; msg+=`${f.nome} ganhou 1 ponto! 🎉\n`; } else { msg+=`${f.nome} ficou com ${s.pct}% - tenta de novo semana que vem 💪\n`; } });
+  dados.feitos={}; salvar(); alert(msg || 'Sem filhas'); toast('Semana fechada!');
 }
 
-window.onload = () => {
-    inicializarFiltrosHistorico(); 
-
-    const s = localStorage.getItem('saldo_transacoes'); 
-    if (s) transacoes = JSON.parse(s); 
-
-   const b = localStorage.getItem('saldo_beneficios');
-
-if (b) {
-    try {
-        const dadosBeneficios = JSON.parse(b);
-
-        if (Array.isArray(dadosBeneficios)) {
-            beneficios = dadosBeneficios;
-        } else {
-            beneficios = [];
-        }
-    } catch (erro) {
-        console.error('Erro ao carregar benefícios:', erro);
-        beneficios = [];
-    }
+// ===== BACKUP - A PARTE MAIS IMPORTANTE =====
+// Gera um código que a filha manda pra mãe no WhatsApp
+function gerarBackup(){
+  // Código simples: transforma os dados em texto
+  const texto = btoa(unescape(encodeURIComponent(JSON.stringify(dados))));
+  codigoBackupAtual = texto;
+  document.getElementById('backup-titulo').textContent='📤 Seu Código de Backup';
+  document.getElementById('backup-texto').textContent='Copia esse código e manda pra mamãe no WhatsApp. Ela cola no app dela e atualiza tudo. Não apaga nada no seu celular.';
+  document.getElementById('backup-codigo').value=texto;
+  document.getElementById('backup-acao').textContent='Copiar e Mandar no WhatsApp';
+  document.getElementById('backup-acao').onclick=()=>{ navigator.clipboard.writeText(texto).then(()=>{ window.open('https://wa.me/?text='+encodeURIComponent('Mamãe, meu backup da semana: '+texto)); toast('Código copiado! Cola no WhatsApp da mamãe'); }); };
+  abrir('modal-backup');
+  document.getElementById('backup-info').textContent='Código gerado! Manda pra mamãe.';
+}
+function copiarBackup(){ navigator.clipboard.writeText(document.getElementById('backup-codigo').value); toast('Copiado!'); }
+function abrirImportar(){
+  document.getElementById('backup-titulo').textContent='📥 Importar Backup da Filha';
+  document.getElementById('backup-texto').textContent='Cole aqui o código que sua filha mandou no WhatsApp e clique em Importar. Vai substituir os dados do seu app pelos dela.';
+  document.getElementById('backup-codigo').value='';
+  document.getElementById('backup-acao').textContent='Importar Agora';
+  document.getElementById('backup-acao').onclick=()=>{
+    try{
+      const texto=document.getElementById('backup-codigo').value.trim();
+      if(!texto) return;
+      const novo=JSON.parse(decodeURIComponent(escape(atob(texto))));
+      if(!novo.filhas) throw new Error('invalido');
+      // Mantém seu PIN de mãe, usa o resto da filha
+      novo.pin = dados.pin;
+      dados = novo; salvar(); fechar('modal-backup'); toast('Backup da filha importado! ✅');
+    }catch(e){ toast('Código inválido. Pede pra ela gerar de novo.'); }
+  };
+  abrir('modal-backup');
 }
 
-    atualizarAplicativo(); 
-};
+if(dados.filhas.length>0) aba=dados.filhas[0].id;
+render();
 </script>
 </body>
 </html>
