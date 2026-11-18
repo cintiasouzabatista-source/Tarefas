@@ -15,7 +15,7 @@
 <body class="pb-24 text-slate-800 select-none">
 <header class="bg-indigo-600 text-white px-4 py-4 rounded-b-3xl sticky top-0 z-30">
   <div class="max-w-md mx-auto flex items-center justify-between">
-    <div><h1 class="text-xl font-black">Tarefas 🏡</h1><p id="data-hoje" class="text-xs font-bold text-indigo-200"></p></div>
+    <div><h1 class="text-xl font-black">Tarefas </h1><p id="data-hoje" class="text-xs font-bold text-indigo-200"></p></div>
     <div class="flex gap-1.5">
       <button onclick="irParaFilhas()" class="bg-white/20 px-3 py-2 rounded-xl text-xs font-extrabold">👧 Filhas</button>
       <button id="btn-pais" onclick="abrirPais()" class="bg-slate-900 px-3 py-2 rounded-xl text-xs font-extrabold">🔒 Pais</button>
@@ -36,8 +36,8 @@
       <button onclick="abrirImportar()" class="bg-white text-slate-900 py-2.5 rounded-xl text-xs font-black">📥 Importar Backup</button>
     </div>
     <div class="grid grid-cols-2 gap-2 mt-2">
-      <button onclick="resetarChecks()" class="bg-rose-500 py-2.5 rounded-xl text-xs font-black">🔄 Zerar Checks de Todas</button>
-      <button onclick="abrirModalTrocarPin()" class="bg-white text-slate-900 py-2.5 rounded-xl text-xs font-black">🔐 Trocar PIN</button>
+      <button onclick="resetarChecks()" class="bg-rose-500 py-2.5 rounded-xl text-xs font-black">🔄 Zerar Checks List</button>
+      <button onclick="abrirModalTrocarPin()" class="bg-white text-slate-900 py-2.5 rounded-xl text-xs font-black">🔐 Alterar PIN</button>
     </div>
   </div>
   <div id="tela" class="space-y-3"></div>
@@ -55,7 +55,7 @@
     <p class="text-xs font-bold text-slate-500">Digite o PIN para entrar</p>
     <div class="relative">
      <input id="pin-input" type="password" inputmode="numeric" maxlength="4" placeholder="••••" oninput="verificarPinAutomatico(this)" class="w-full text-center text-3xl tracking-[0.5em] font-black py-3 bg-slate-100 rounded-2xl outline-none">
-      <button onclick="mostrarPin()" class="absolute right-3 top-1/2 -translate-y-1/2 text-lg">👁️</button>
+      <button onclick="mostrarPin()" class="absolute right-3 top-1/2 -translate-y-1/2 text-lg">🧿</button>
     </div>
     <p id="pin-erro" class="text-xs font-bold text-rose-600 hidden">PIN incorreto. Tenta de novo</p>
     <div class="grid grid-cols-2 gap-2"><button onclick="fechar('modal-pin')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Cancelar</button><button onclick="confirmarPin()" class="bg-indigo-600 text-white py-2.5 rounded-xl font-extrabold text-sm">Entrar</button></div>
@@ -64,8 +64,8 @@
 </div>
 <div id="modal-filha" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
   <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3">
-    <h2 class="font-black">Cadastrar Filha</h2>
-    <input id="filha-nome" placeholder="Nome: Rafa, Soso..." class="w-full px-3 py-2.5 bg-slate-100 rounded-xl font-bold outline-none">
+    <h2 class="font-black">Cadastrar Filh(a)s</h2>
+    <input id="filha-nome" placeholder="Nome: Nome ou Apelido..." class="w-full px-3 py-2.5 bg-slate-100 rounded-xl font-bold outline-none">
     <div><p class="text-xs font-extrabold text-slate-500">Avatar</p><div id="avatares" class="flex gap-2 mt-1 flex-wrap"></div></div>
     <div class="grid grid-cols-2 gap-2"><button onclick="fechar('modal-filha')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Cancelar</button><button onclick="salvarFilha()" class="bg-indigo-600 text-white py-2.5 rounded-xl font-extrabold text-sm">Salvar</button></div>
   </div>
@@ -131,7 +131,7 @@ function verificarPinAutomatico(input){
   function resetarPin(){ if(!confirm('Resetar o PIN para 1234?')) return; dados.pin='1234'; salvar(); toast('PIN resetado para 1234!'); }
 function abrirModalTrocarPin(){ const novo=prompt('Novo PIN de 4 números:'); if(!novo) return; if(novo.length!==4 || isNaN(novo)){ alert('Tem que ser 4 números!'); return; } const conf=prompt('Confirma o PIN novo:'); if(conf!==novo){ alert('Não bateu, tenta de novo!'); return; } dados.pin=novo; salvar(); alert('PIN novo salvo! Anota aí: '+novo); }
 function sairPais(){ souPais=false; document.getElementById('painel-pais').classList.add('hidden'); document.getElementById('btn-pais').textContent='🔒 Pais'; render(); }
-const AVATARES=['👧','🧒','🌟','🦋','🐱','🦄','🌸','👩'];
+const AVATARES=['👧','🧒','🦁','🦋','🐱','🦄','🌸','🐼'];
 function abrirModalFilha(){ document.getElementById('filha-nome').value=''; avatarSel=AVATARES[0]; document.getElementById('avatares').innerHTML=AVATARES.map(a=>`<button onclick="avatarSel='${a}'" class="text-2xl p-2 bg-slate-100 rounded-xl">${a}</button>`).join(''); abrir('modal-filha'); }
 function salvarFilha(){ const nome=document.getElementById('filha-nome').value.trim(); if(!nome) return; dados.filhas.push({id:Date.now().toString(), nome, avatar:avatarSel, xp:0, pontos:0}); fechar('modal-filha'); salvar(); }
 const ICONES=['🍽️','🧹','🗑️','🛏️','📚','📖','👕','🐕','🪴','🧽','✨','🚽','🍂'];
