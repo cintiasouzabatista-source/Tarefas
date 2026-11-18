@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Tarefas - Família</title>
+<title>Tarefas </title>
 <meta name="theme-color" content="#4F46E5">
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
@@ -12,9 +12,9 @@
 <body class="pb-24 text-slate-800 select-none">
 <header class="bg-indigo-600 text-white px-4 py-4 rounded-b-3xl sticky top-0 z-30">
   <div class="max-w-md mx-auto flex items-center justify-between">
-    <div><h1 class="text-xl font-black">Tarefas 🏡</h1><p id="data-hoje" class="text-xs font-bold text-indigo-200"></p></div>
+    <div><h1 class="text-xl font-black">Tarefas /h1><p id="data-hoje" class="text-xs font-bold text-indigo-200"></p></div>
     <div class="flex gap-1.5">
-      <button onclick="irParaFilhas()" class="bg-white/20 px-3 py-2 rounded-xl text-xs font-extrabold">👧 Filhas</button>
+      <button onclick="irParaFilhas()" class="bg-white/20 px-3 py-2 rounded-xl text-xs font-extrabold">Filho(as)</button>
       <button id="btn-pais" onclick="abrirPais()" class="bg-slate-900 px-3 py-2 rounded-xl text-xs font-extrabold">🔒 Pais</button>
     </div>
   </div>
@@ -24,7 +24,7 @@
   <div id="painel-pais" class="hidden bg-slate-900 text-white p-3 rounded-2xl">
     <p class="text-xs font-extrabold mb-2 text-center">MODO PAIS ATIVO - <button onclick="sairPais()" class="text-amber-300 underline">Sair</button></p>
     <div class="grid grid-cols-3 gap-2">
-      <button onclick="abrirModalFilha()" class="bg-indigo-600 py-2 rounded-xl text-xs font-extrabold">+ Filha</button>
+      <button onclick="abrirModalFilha()" class="bg-indigo-600 py-2 rounded-xl text-xs font-extrabold">+ Filho(as)</button>
       <button onclick="abrirModalTarefa()" class="bg-emerald-600 py-2 rounded-xl text-xs font-extrabold">+ Tarefa</button>
       <button onclick="abrirModalValor()" class="bg-amber-500 py-2 rounded-xl text-xs font-extrabold">🪙 Valor</button>
     </div>
@@ -33,15 +33,15 @@
       <button onclick="abrirImportar()" class="bg-white text-slate-900 py-2.5 rounded-xl text-xs font-black">📥 Importar Backup</button>
     </div>
     <div class="grid grid-cols-2 gap-2 mt-2">
-      <button onclick="resetarChecks()" class="bg-rose-500 py-2.5 rounded-xl text-xs font-black">🔄 Zerar Checks de Todas</button>
+      <button onclick="resetarChecks()" class="bg-rose-500 py-2.5 rounded-xl text-xs font-black">🔄 Zerar Checks List</button>
       <button onclick="abrirModalTrocarPin()" class="bg-white text-slate-900 py-2.5 rounded-xl text-xs font-black">🔐 Trocar PIN</button>
     </div>
   </div>
   <div id="tela" class="space-y-3"></div>
   <div class="bg-amber-50 border border-amber-200 rounded-3xl p-4 space-y-2">
     <h3 class="font-black text-sm text-amber-900">📦 Backup da Semana</h3>
-    <p class="text-xs font-bold text-amber-800">No fim do dia, toque aqui e mande o código curtinho pra mamãe.</p>
-    <button onclick="gerarBackup()" class="w-full bg-amber-500 text-white py-3 rounded-2xl font-black text-sm">📤 Gerar Código Curtinho</button>
+    <p class="text-xs font-bold text-amber-800">Mande o código pra mamãe.</p>
+    <button onclick="gerarBackup()" class="w-full bg-amber-500 text-white py-3 rounded-2xl font-black text-sm">📤 Finalizar Dia</button>
   </div>
 </main>
 <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-slate-900 text-white p-3.5 rounded-2xl shadow-xl hidden z-50"><p id="toast-msg" class="text-xs font-bold"></p></div>
@@ -51,7 +51,7 @@
     <p class="text-xs font-bold text-slate-500">Digite o PIN - entra sozinho no 4º número</p>
     <div class="relative">
       <input id="pin-input" type="password" inputmode="numeric" maxlength="4" placeholder="••••" oninput="verificarPinAutomatico(this)" class="w-full text-center text-3xl tracking-[0.5em] font-black py-3 bg-slate-100 rounded-2xl outline-none">
-      <button onclick="mostrarPin()" class="absolute right-3 top-1/2 -translate-y-1/2 text-lg">👁️</button>
+      <button onclick="mostrarPin()" class="absolute right-3 top-1/2 -translate-y-1/2 text-lg"></button>
     </div>
     <p id="pin-erro" class="text-xs font-bold text-rose-600 hidden">PIN incorreto. Tenta de novo</p>
     <div class="grid grid-cols-2 gap-2"><button onclick="fechar('modal-pin')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Cancelar</button><button onclick="confirmarPin()" class="bg-indigo-600 text-white py-2.5 rounded-xl font-extrabold text-sm">Entrar</button></div>
@@ -60,7 +60,7 @@
 </div>
 <div id="modal-filha" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
   <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3">
-    <h2 class="font-black">Cadastrar Filha</h2>
+    <h2 class="font-black">Cadastrar Filho(as)</h2>
     <input id="filha-nome" placeholder="Nome: Rafa, Soso..." class="w-full px-3 py-2.5 bg-slate-100 rounded-xl font-bold outline-none">
     <div><p class="text-xs font-extrabold text-slate-500">Avatar - toca pra trocar</p><div id="avatares" class="flex gap-2 mt-1 flex-wrap"></div></div>
     <div class="grid grid-cols-2 gap-2"><button onclick="fechar('modal-filha')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Cancelar</button><button onclick="salvarFilha()" class="bg-indigo-600 text-white py-2.5 rounded-xl font-extrabold text-sm">Salvar</button></div>
@@ -118,7 +118,7 @@ function confirmarPin(){ const v=document.getElementById('pin-input').value.trim
 function resetarPin(){ if(!confirm('Resetar o PIN para 1234?')) return; dados.pin='1234'; salvar(); toast('PIN resetado para 1234!'); }
 function abrirModalTrocarPin(){ const novo=prompt('Novo PIN de 4 números:'); if(!novo) return; if(novo.length!==4 || isNaN(novo)){ alert('Tem que ser 4 números!'); return; } const conf=prompt('Confirma o PIN novo:'); if(conf!==novo){ alert('Não bateu, tenta de novo!'); return; } dados.pin=novo; salvar(); alert('PIN novo salvo! Anota aí: '+novo); }
 function sairPais(){ souPais=false; document.getElementById('painel-pais').classList.add('hidden'); document.getElementById('btn-pais').textContent='🔒 Pais'; render(); }
-const AVATARES=['👧','🧒','🌟','🦋','🐱','🦄','🌸','👩'];
+const AVATARES= ['👧','🧒','🐶','🦋','🐱','🦁','🫍','🐼'];
 function selecionarAvatar(avatar){ avatarSel=avatar; document.querySelectorAll('#avatares button').forEach(b=>{ if(b.textContent.trim()===avatar) b.className='text-2xl p-2 rounded-xl bg-indigo-200 border-2 border-indigo-600'; else b.className='text-2xl p-2 rounded-xl bg-slate-100'; }); }
 function abrirModalFilha(){ document.getElementById('filha-nome').value=''; avatarSel=AVATARES[0]; editandoFilhaId=null; document.getElementById('modal-filha').querySelector('h2').textContent='Cadastrar Filha'; document.getElementById('avatares').innerHTML=AVATARES.map(a=>`<button type="button" onclick="selecionarAvatar('${a}')" class="text-2xl p-2 rounded-xl ${avatarSel===a?'bg-indigo-200 border-2 border-indigo-600':'bg-slate-100'}">${a}</button>`).join(''); abrir('modal-filha'); }
 function abrirModalEditarFilha(id){ const f=dados.filhas.find(x=>x.id===id); if(!f) return; editandoFilhaId=id; document.getElementById('filha-nome').value=f.nome; avatarSel=f.avatar; document.getElementById('avatares').innerHTML=AVATARES.map(a=>`<button type="button" onclick="selecionarAvatar('${a}')" class="text-2xl p-2 rounded-xl ${avatarSel===a?'bg-indigo-200 border-2 border-indigo-600':'bg-slate-100'}">${a}</button>`).join(''); document.getElementById('modal-filha').querySelector('h2').textContent='Editar Filha ✏️'; abrir('modal-filha'); }
