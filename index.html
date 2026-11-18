@@ -199,21 +199,67 @@ function marcar(tarefaId, filhaId, dia){ const chave=`${tarefaId}_${filhaId}_${d
 function excluirTarefa(id){ if(!souPais) return; if(!confirm('Excluir essa tarefa?')) return; dados.tarefas=dados.tarefas.filter(t=>t.id!==id); salvar(); }
 function excluirFilha(id){ if(!souPais) return; if(!confirm('Excluir essa filha?')) return; dados.filhas=dados.filhas.filter(f=>f.id!==id); aba='premios'; salvar(); }
 function fecharSemana(){ if(!souPais) return; let msg=''; dados.filhas.forEach(f=>{ const s=statsFilha(f.id); if(s.tot>0 && s.pct===100){ f.pontos++; f.xp+=50; msg+=`${f.nome} ganhou 1 ponto! 🎉\n`; } else { msg+=`${f.nome} ficou com ${s.pct}% - tenta de novo semana que vem 💪\n`; } }); dados.feitos={}; dados.folgas={}; salvar(); alert(msg || 'Sem filhas'); toast('Semana fechada!'); }
-function gerarBackup(){ const texto=btoa(unescape(encodeURIComponent(JSON.stringify(dados)))); document.getElementById('backup-titulo').textContent='📤 Seu Código de Backup'; document.getElementById('backup-texto').textContent='Copia esse código e manda pra mamãe no WhatsApp.'; document.getElementById('backup-codigo').value=texto; document.getElementById('backup-acao').textContent='Copiar e Mandar no WhatsApp'; document.getElementById('backup-acao').onclick=()=>{ navigator.clipboard.writeText(texto).then(()=>{ window.open('https://wa.me/?text='+encodeURIComponent('Mamãe, meu backup da semana: '+texto)); toast('Código copiado!'); }); }; abrir('modal-backup'); document.getElementById('backup-info').textContent='Código gerado! Manda pra mamãe.'; }
+function gerarBackup(){
+  // Backup CURTO - só manda XP + checks
+  const partes = dados.filhas.map(f => {
+    const checks = Object.keys(dados.feitos).filter(k => k.includes(`_${f.id}_`)).map(k => {
+      // pega só o final: tarefaIndex_dia
+      const tarefaId = k.split('_')[0];
+      const dia = k.split('_')[2];
+      const idx = dados.tarefas.findIndex(t => t.id === tarefaId);
+      return idx + '-' + dia;
+    }).join(',');
+    return `${f.nome.slice(0,1)}${f.xp}:${checks}`;
+  });
+  const texto = partes.join('|');
+  document.getElementById('backup-titulo').textContent='📤 Seu Código de Backup';
+  document.getElementById('backup-texto').textContent='Código curtinho! Copia e manda pra mamãe.';
+  document.getElementById('backup-codigo').value=texto;
+  document.getElementById('backup-acao').textContent='Copiar e Mandar no WhatsApp';
+  document.getElementById('backup-acao').onclick=()=>{
+    navigator.clipboard.writeText(texto).then(()=>{
+      window.open('https://wa.me/?text='+encodeURIComponent('Mamãe, meu backup: '+texto));
+      toast('Código copiado!');
+    });
+  };
+  abrir('modal-backup');
+}
 function copiarBackup(){ navigator.clipboard.writeText(document.getElementById('backup-codigo').value); toast('Copiado!'); }
 function abrirImportar(){
   document.getElementById('backup-titulo').textContent='📥 Importar Backup da Filha';
-  document.getElementById('backup-texto').textContent='Cole aqui o código que sua filha mandou. Ele vai JUNTAR com o que você já tem, não vai apagar a outra filha.';
+  document.getElementById('backup-texto').textContent='Cole o código curtinho que ela mandou. Ele vai juntar, não apagar a outra.';
   document.getElementById('backup-codigo').value='';
   document.getElementById('backup-acao').textContent='Importar Agora';
   document.getElementById('backup-acao').onclick=()=>{
     try{
-      const texto=document.getElementById('backup-codigo').value.trim(); if(!texto) return;
-      const novo=JSON.parse(decodeURIComponent(escape(atob(texto)))); if(!novo.filhas) throw new Error('invalido');
-      novo.filhas.forEach(fNova=>{ const fAtual=dados.filhas.find(f=>f.id===fNova.id); if(fAtual){ fAtual.xp=fNova.xp; fAtual.pontos=fNova.pontos; fAtual.nome=fNova.nome; fAtual.avatar=fNova.avatar; } else { dados.filhas.push(fNova); } });
-      novo.tarefas.forEach(tNova=>{ if(!dados.tarefas.find(t=>t.id===tNova.id)) dados.tarefas.push(tNova); });
-      dados.feitos={...dados.feitos, ...novo.feitos}; dados.folgas={...dados.folgas, ...novo.folgas}; dados.valor=novo.valor || dados.valor;
-      salvar(); fechar('modal-backup'); toast('Backup juntado! ✅ A outra filha não foi apagada.');
+      const texto=document.getElementById('backup-codigo').value.trim();
+      if(!texto) return;
+      // Tenta o formato NOVO curtinho primeiro
+      if(texto.includes('|') || (texto.includes(':') && !texto.startsWith('eyJ'))){
+        texto.split('|').forEach(parte=>{
+          const [cabecalho, checksStr] = parte.split(':');
+          const inicial = cabecalho[0];
+          const xp = parseInt(cabecalho.slice(1));
+          const filha = dados.filhas.find(f=>f.nome.startsWith(inicial));
+          if(!filha) return;
+          filha.xp = xp;
+          if(checksStr){
+            checksStr.split(',').forEach(c=>{
+              if(!c) return;
+              const [idx, dia] = c.split('-');
+              const tarefa = dados.tarefas[parseInt(idx)];
+              if(tarefa) dados.feitos[`${tarefa.id}_${filha.id}_${dia}`]=true;
+            });
+          }
+        });
+        salvar(); fechar('modal-backup'); toast('Backup curtinho importado! ✅');
+        return;
+      }
+      // Se for o código ANTIGO gigante, usa o jeito antigo
+      const novo=JSON.parse(decodeURIComponent(escape(atob(texto))));
+      novo.filhas.forEach(fNova=>{ const fAtual=dados.filhas.find(f=>f.id===fNova.id); if(fAtual){ fAtual.xp=fNova.xp; fAtual.pontos=fNova.pontos; } else dados.filhas.push(fNova); });
+      dados.feitos={...dados.feitos, ...novo.feitos};
+      salvar(); fechar('modal-backup'); toast('Backup antigo importado! ✅');
     }catch(e){ toast('Código inválido. Pede pra ela gerar de novo.'); }
   };
   abrir('modal-backup');
