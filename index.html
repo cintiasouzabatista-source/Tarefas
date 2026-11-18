@@ -52,15 +52,18 @@
 
 <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-slate-900 text-white p-3.5 rounded-2xl shadow-xl hidden z-50"><p id="toast-msg" class="text-xs font-bold"></p></div>
 
-<!-- MODAL PIN - CORRIGIDO -->
+<!-- MODAL PIN - CORRIGIDO, SEM MOSTRAR O PIN -->
 <div id="modal-pin" class="fixed inset-0 bg-black/60 z-[100] hidden items-center justify-center p-4">
   <div class="bg-white w-full max-w-xs rounded-3xl p-5 text-center space-y-3">
     <h2 class="font-black">🔐 PIN dos Pais</h2>
-    <p class="text-xs font-bold text-slate-500">PIN inicial é 1234</p>
-    <input id="pin-input" type="tel" inputmode="numeric" maxlength="4" placeholder="1234" class="w-full text-center text-3xl tracking-[0.5em] font-black py-3 bg-slate-100 rounded-2xl outline-none">
-    <p id="pin-erro" class="text-xs font-bold text-rose-600 hidden">PIN incorreto. Tenta 1234</p>
+    <p class="text-xs font-bold text-slate-500">Digite o PIN para entrar</p>
+    <div class="relative">
+      <input id="pin-input" type="password" inputmode="numeric" maxlength="4" placeholder="••••" class="w-full text-center text-3xl tracking-[0.5em] font-black py-3 bg-slate-100 rounded-2xl outline-none">
+      <button onclick="mostrarPin()" class="absolute right-3 top-1/2 -translate-y-1/2 text-lg">👁️</button>
+    </div>
+    <p id="pin-erro" class="text-xs font-bold text-rose-600 hidden">PIN incorreto. Tenta de novo</p>
     <div class="grid grid-cols-2 gap-2"><button onclick="fechar('modal-pin')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Cancelar</button><button onclick="confirmarPin()" class="bg-indigo-600 text-white py-2.5 rounded-xl font-extrabold text-sm">Entrar</button></div>
-    <button onclick="resetarPin()" class="text-xs font-bold text-indigo-600 underline">Esqueci o PIN - resetar para 1234</button>
+    <button onclick="resetarPin()" class="text-xs font-bold text-indigo-600 underline">Esqueci o PIN - resetar</button>
   </div>
 </div>
 
