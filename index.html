@@ -42,9 +42,9 @@
   </div>
   <div id="tela" class="space-y-3"></div>
   <div class="bg-amber-50 border border-amber-200 rounded-3xl p-4 space-y-2">
-    <h3 class="font-black text-sm text-amber-900">📦 Backup da Semana</h3>
-    <p class="text-xs font-bold text-amber-800">No fim do dia, toque aqui e mande o código pra mamãe no WhatsApp.</p>
-    <button onclick="gerarBackup()" class="w-full bg-amber-500 text-white py-3 rounded-2xl font-black text-sm">📤 Gerar Código e Mandar pra Mamãe</button>
+    <h3 class="font-black text-sm text-amber-900">📦 Backup</h3>
+    <p class="text-xs font-bold text-amber-800"> Mande o código pra mamãe no WhatsApp.</p>
+    <button onclick="gerarBackup()" class="w-full bg-amber-500 text-white py-3 rounded-2xl font-black text-sm">📤 Clique Aqui pra finalizar</button>
     <p id="backup-info" class="text-[11px] font-bold text-amber-700 text-center"></p>
   </div>
 </main>
@@ -54,13 +54,13 @@
     <h2 class="font-black">🔐 PIN dos Pais</h2>
     <p class="text-xs font-bold text-slate-500">Digite o PIN para entrar</p>
     <div class="relative">
-      <input id="pin-input" type="password" inputmode="numeric" maxlength="4" placeholder="••••" class="w-full text-center text-3xl tracking-[0.5em] font-black py-3 bg-slate-100 rounded-2xl outline-none">
+     <input id="pin-input" type="password" inputmode="numeric" maxlength="4" placeholder="••••" oninput="verificarPinAutomatico(this)" class="w-full text-center text-3xl tracking-[0.5em] font-black py-3 bg-slate-100 rounded-2xl outline-none">
       <button onclick="mostrarPin()" class="absolute right-3 top-1/2 -translate-y-1/2 text-lg">👁️</button>
     </div>
     <p id="pin-erro" class="text-xs font-bold text-rose-600 hidden">PIN incorreto. Tenta de novo</p>
     <div class="grid grid-cols-2 gap-2"><button onclick="fechar('modal-pin')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Cancelar</button><button onclick="confirmarPin()" class="bg-indigo-600 text-white py-2.5 rounded-xl font-extrabold text-sm">Entrar</button></div>
-    <button onclick="resetarPin()" class="text-xs font-bold text-indigo-600 underline">Esqueci o PIN - resetar</button>
-  </div>
+       <button onclick="resetarPin()" class="text-xs font-bold text-indigo-600 underline">Esqueci o PIN - resetar</button>
+     </div>
 </div>
 <div id="modal-filha" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
   <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3">
@@ -120,7 +120,15 @@ function irParaFilhas(){ aba = dados.filhas.length>0 ? dados.filhas[0].id : 'pre
 function abrirPais(){ if(souPais){ sairPais(); return; } document.getElementById('pin-input').value=''; document.getElementById('pin-erro').classList.add('hidden'); abrir('modal-pin'); setTimeout(()=>document.getElementById('pin-input').focus(),100); }
 function mostrarPin(){ const inp=document.getElementById('pin-input'); inp.type = inp.type==='password' ? 'tel' : 'password'; }
 function confirmarPin(){ const v=document.getElementById('pin-input').value.trim(); if(v===String(dados.pin)){ souPais=true; fechar('modal-pin'); document.getElementById('painel-pais').classList.remove('hidden'); document.getElementById('btn-pais').textContent='🔓 Sair'; toast('Modo Pais ativado!'); render(); } else { document.getElementById('pin-erro').classList.remove('hidden'); } }
-function resetarPin(){ if(!confirm('Resetar o PIN para 1234?')) return; dados.pin='1234'; salvar(); toast('PIN resetado para 1234!'); }
+function verificarPinAutomatico(input){
+  // Deixa só número
+  input.value = input.value.replace(/\D/g, '').slice(0,4);
+  // Quando completar 4 números, entra sozinho
+  if(input.value.length === 4){
+    setTimeout(()=>confirmarPin(), 150);
+  }
+}
+  function resetarPin(){ if(!confirm('Resetar o PIN para 1234?')) return; dados.pin='1234'; salvar(); toast('PIN resetado para 1234!'); }
 function abrirModalTrocarPin(){ const novo=prompt('Novo PIN de 4 números:'); if(!novo) return; if(novo.length!==4 || isNaN(novo)){ alert('Tem que ser 4 números!'); return; } const conf=prompt('Confirma o PIN novo:'); if(conf!==novo){ alert('Não bateu, tenta de novo!'); return; } dados.pin=novo; salvar(); alert('PIN novo salvo! Anota aí: '+novo); }
 function sairPais(){ souPais=false; document.getElementById('painel-pais').classList.add('hidden'); document.getElementById('btn-pais').textContent='🔒 Pais'; render(); }
 const AVATARES=['👧','🧒','🌟','🦋','🐱','🦄','🌸','👩'];
