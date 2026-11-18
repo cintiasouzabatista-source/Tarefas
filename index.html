@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Tarefas - Família</title>
+<meta name="theme-color" content="#4F46E5">
+<link rel="icon" href="./icon-192x192.png">
+<link rel="apple-touch-icon" href="./icon-192x192.png">
+<link rel="manifest" href="./manifest.json">
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
 <style>body{font-family:'Nunito',sans-serif;background:#F8FAFC} .no-scrollbar::-webkit-scrollbar{display:none}</style>
@@ -21,10 +25,8 @@
 </header>
 
 <main class="max-w-md mx-auto px-4 mt-4 space-y-3">
-  <!-- ABAS FILHAS -->
   <div id="abas" class="flex gap-2 overflow-x-auto no-scrollbar"></div>
 
-  <!-- PAINEL PAIS -->
   <div id="painel-pais" class="hidden bg-slate-900 text-white p-3 rounded-2xl">
     <p class="text-xs font-extrabold mb-2 text-center">MODO PAIS ATIVO - <button onclick="sairPais()" class="text-amber-300 underline">Sair</button></p>
     <div class="grid grid-cols-3 gap-2">
@@ -38,10 +40,8 @@
     </div>
   </div>
 
-  <!-- CARD FILHA -->
   <div id="tela" class="space-y-3"></div>
 
-  <!-- BACKUP - APARECE SEMPRE PARA AS FILHAS -->
   <div class="bg-amber-50 border border-amber-200 rounded-3xl p-4 space-y-2">
     <h3 class="font-black text-sm text-amber-900">📦 Backup da Semana</h3>
     <p class="text-xs font-bold text-amber-800">No fim da semana, toque aqui e mande o código pra mamãe no WhatsApp. Ela atualiza o app dela.</p>
@@ -50,16 +50,17 @@
   </div>
 </main>
 
-<!-- TOAST -->
 <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-slate-900 text-white p-3.5 rounded-2xl shadow-xl hidden z-50"><p id="toast-msg" class="text-xs font-bold"></p></div>
 
-<!-- MODAL PIN -->
-<div id="modal-pin" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
+<!-- MODAL PIN - CORRIGIDO -->
+<div id="modal-pin" class="fixed inset-0 bg-black/60 z-[100] hidden items-center justify-center p-4">
   <div class="bg-white w-full max-w-xs rounded-3xl p-5 text-center space-y-3">
     <h2 class="font-black">🔐 PIN dos Pais</h2>
-    <input id="pin-input" type="password" inputmode="numeric" maxlength="4" placeholder="••••" class="w-full text-center text-3xl tracking-[0.5em] font-black py-3 bg-slate-100 rounded-2xl outline-none">
-    <p id="pin-erro" class="text-xs font-bold text-rose-600 hidden">PIN incorreto</p>
+    <p class="text-xs font-bold text-slate-500">PIN inicial é 1234</p>
+    <input id="pin-input" type="tel" inputmode="numeric" maxlength="4" placeholder="1234" class="w-full text-center text-3xl tracking-[0.5em] font-black py-3 bg-slate-100 rounded-2xl outline-none">
+    <p id="pin-erro" class="text-xs font-bold text-rose-600 hidden">PIN incorreto. Tenta 1234</p>
     <div class="grid grid-cols-2 gap-2"><button onclick="fechar('modal-pin')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Cancelar</button><button onclick="confirmarPin()" class="bg-indigo-600 text-white py-2.5 rounded-xl font-extrabold text-sm">Entrar</button></div>
+    <button onclick="resetarPin()" class="text-xs font-bold text-indigo-600 underline">Esqueci o PIN - resetar para 1234</button>
   </div>
 </div>
 
@@ -95,7 +96,7 @@
   </div>
 </div>
 
-<!-- MODAL BACKUP / IMPORTAR -->
+<!-- MODAL BACKUP -->
 <div id="modal-backup" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
   <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3">
     <h2 id="backup-titulo" class="font-black">📦 Backup</h2>
@@ -125,21 +126,21 @@ window.fechar=fechar;
 document.getElementById('data-hoje').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'short'});
 
 function irParaFilhas(){ aba='filhas'; souPais=false; document.getElementById('painel-pais').classList.add('hidden'); document.getElementById('btn-pais').textContent='🔒 Pais'; render(); }
-function abrirPais(){ if(souPais){ sairPais(); return; } document.getElementById('pin-input').value=''; document.getElementById('pin-erro').classList.add('hidden'); abrir('modal-pin'); }
-function confirmarPin(){ const v=document.getElementById('pin-input').value; if(v===dados.pin){ souPais=true; fechar('modal-pin'); document.getElementById('painel-pais').classList.remove('hidden'); document.getElementById('btn-pais').textContent='🔓 Sair'; toast('Modo Pais ativado!'); render(); } else { document.getElementById('pin-erro').classList.remove('hidden'); } }
+function abrirPais(){ if(souPais){ sairPais(); return; } document.getElementById('pin-input').value=''; document.getElementById('pin-erro').classList.add('hidden'); abrir('modal-pin'); setTimeout(()=>document.getElementById('pin-input').focus(),100); }
+function confirmarPin(){ const v=document.getElementById('pin-input').value.trim(); if(v===String(dados.pin)){ souPais=true; fechar('modal-pin'); document.getElementById('painel-pais').classList.remove('hidden'); document.getElementById('btn-pais').textContent='🔓 Sair'; toast('Modo Pais ativado!'); render(); } else { document.getElementById('pin-erro').classList.remove('hidden'); } }
+function resetarPin(){ if(!confirm('Resetar o PIN para 1234?')) return; dados.pin='1234'; salvar(); document.getElementById('pin-erro').classList.add('hidden'); toast('PIN resetado para 1234! Digita 1234 e clica em Entrar'); }
 function sairPais(){ souPais=false; document.getElementById('painel-pais').classList.add('hidden'); document.getElementById('btn-pais').textContent='🔒 Pais'; render(); }
 
-// FILHAS
 const AVATARES=['👧','🧒','🌟','🦋','🐱','🦄','🌸','👩'];
-function abrirModalFilha(){ document.getElementById('filha-nome').value=''; avatarSel=AVATARES[0]; document.getElementById('avatares').innerHTML=AVATARES.map(a=>`<button onclick="avatarSel='${a}';this.style.border='2px solid #4F46E5'" class="text-2xl p-2 bg-slate-100 rounded-xl">${a}</button>`).join(''); abrir('modal-filha'); }
+function abrirModalFilha(){ document.getElementById('filha-nome').value=''; avatarSel=AVATARES[0]; document.getElementById('avatares').innerHTML=AVATARES.map(a=>`<button onclick="avatarSel='${a}'" class="text-2xl p-2 bg-slate-100 rounded-xl">${a}</button>`).join(''); abrir('modal-filha'); }
 function salvarFilha(){ const nome=document.getElementById('filha-nome').value.trim(); if(!nome) return; dados.filhas.push({id:Date.now().toString(), nome, avatar:avatarSel, xp:0, pontos:0}); fechar('modal-filha'); salvar(); }
 
-// TAREFAS
 const ICONES=['🍽️','🧹','🗑️','🛏️','📚','📖','👕','🐕','🪴','🧽','✨'];
 function abrirModalTarefa(){ if(dados.filhas.length===0){ toast('Cadastre uma filha primeiro!'); return; } document.getElementById('tarefa-nome').value=''; iconeSel=ICONES[0]; paraSel='todas'; diasSel=[1,2,3,4,5]; renderFormTarefa(); abrir('modal-tarefa'); }
 function renderFormTarefa(){
   document.getElementById('icones').innerHTML=ICONES.map(i=>`<button onclick="iconeSel='${i}';renderFormTarefa()" class="p-2 rounded-xl ${iconeSel===i?'bg-indigo-100 border-2 border-indigo-600':'bg-slate-100'}">${i}</button>`).join('');
   let h=`<button onclick="paraSel='todas';renderFormTarefa()" class="px-3 py-1.5 rounded-xl text-xs font-extrabold ${paraSel==='todas'?'bg-indigo-600 text-white':'bg-slate-100'}">Todas</button>`;
+  h+=`<button onclick="paraSel='revezamento';renderFormTarefa()" class="px-3 py-1.5 rounded-xl text-xs font-extrabold ${paraSel==='revezamento'?'bg-amber-500 text-white':'bg-slate-100'}">🔄 Revezar</button>`;
   h+=dados.filhas.map(f=>`<button onclick="paraSel='${f.id}';renderFormTarefa()" class="px-3 py-1.5 rounded-xl text-xs font-extrabold ${paraSel===f.id?'bg-indigo-600 text-white':'bg-slate-100'}">${f.avatar} ${f.nome}</button>`).join('');
   document.getElementById('tarefa-para').innerHTML=h;
   const dias=[['Seg',1],['Ter',2],['Qua',3],['Qui',4],['Sex',5]];
@@ -148,12 +149,27 @@ function renderFormTarefa(){
 function toggleDia(d){ diasSel = diasSel.includes(d) ? diasSel.filter(x=>x!==d) : [...diasSel,d]; renderFormTarefa(); }
 function salvarTarefa(){ const nome=document.getElementById('tarefa-nome').value.trim(); if(!nome||diasSel.length===0) return; dados.tarefas.push({id:Date.now().toString(), nome, icone:iconeSel, para:paraSel, dias:diasSel}); fechar('modal-tarefa'); salvar(); toast('Tarefa salva!'); }
 
-// VALOR
 function abrirModalValor(){ document.getElementById('valor-input').value=dados.valor; abrir('modal-valor'); }
 function salvarValor(){ const v=parseFloat(document.getElementById('valor-input').value); if(!isNaN(v)){ dados.valor=v; } fechar('modal-valor'); salvar(); }
 
+// REVEZAMENTO - RESERVA EM DIAS ALTERNADOS
+function filhaDaVezRevezamento(dia){
+  if(dados.filhas.length===0) return null;
+  const semana = Math.floor(Date.now() / (1000*60*60*24*7));
+  const indice = (dia + semana) % dados.filhas.length;
+  return dados.filhas[indice];
+}
 function tarefasDaFilha(filhaId, dia){
-  return dados.tarefas.filter(t=> t.dias.includes(dia) && (t.para==='todas' || t.para===filhaId));
+  return dados.tarefas.filter(t=>{
+    if(!t.dias.includes(dia)) return false;
+    if(t.para==='todas') return true;
+    if(t.para===filhaId) return true;
+    if(t.para==='revezamento'){
+      const vez = filhaDaVezRevezamento(dia);
+      return vez && vez.id===filhaId;
+    }
+    return false;
+  });
 }
 function statsFilha(id){ let tot=0, feito=0; [1,2,3,4,5].forEach(d=>{ tarefasDaFilha(id,d).forEach(t=>{ tot++; if(dados.feitos[`${t.id}_${id}_${d}`]) feito++; }); }); return {tot, feito, pct: tot?Math.round(feito/tot*100):0}; }
 
@@ -177,7 +193,7 @@ function render(){
   const lista=tarefasDaFilha(filha.id, diaVendo);
   let tarefasHtml='';
   if(lista.length===0) tarefasHtml=`<div class="bg-white rounded-3xl p-6 text-center"><p class="text-sm font-extrabold">Sem tarefas neste dia ✨</p></div>`;
-  else tarefasHtml=lista.map(t=>{ const chave=`${t.id}_${filha.id}_${diaVendo}`; const ok=!!dados.feitos[chave]; return `<div class="bg-white rounded-2xl p-3.5 border flex items-center justify-between ${ok?'border-emerald-300 bg-emerald-50/30':''}"><button onclick="marcar('${t.id}','${filha.id}',${diaVendo})" class="flex items-center gap-3 flex-1 text-left"><span class="w-6 h-6 rounded-lg border-2 flex items-center justify-center ${ok?'bg-emerald-500 border-emerald-500 text-white text-xs font-black':'border-slate-300'}">${ok?'✓':''}</span><span class="text-xl">${t.icone}</span><span class="font-extrabold text-sm ${ok?'line-through text-slate-400':''}">${t.nome}</span></button>${souPais?`<button onclick="excluirTarefa('${t.id}')" class="text-slate-400 px-1">🗑️</button>`:''}</div>`}).join('');
+  else tarefasHtml=lista.map(t=>{ const chave=`${t.id}_${filha.id}_${diaVendo}`; const ok=!!dados.feitos[chave]; return `<div class="bg-white rounded-2xl p-3.5 border flex items-center justify-between ${ok?'border-emerald-300 bg-emerald-50/30':''}"><button onclick="marcar('${t.id}','${filha.id}',${diaVendo})" class="flex items-center gap-3 flex-1 text-left"><span class="w-6 h-6 rounded-lg border-2 flex items-center justify-center ${ok?'bg-emerald-500 border-emerald-500 text-white text-xs font-black':'border-slate-300'}">${ok?'✓':''}</span><span class="text-xl">${t.icone}</span><span class="font-extrabold text-sm ${ok?'line-through text-slate-400':''}">${t.nome} ${t.para==='revezamento'?'<span class="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">🔄 Sua vez hoje</span>':''}</span></button>${souPais?`<button onclick="excluirTarefa('${t.id}')" class="text-slate-400 px-1">🗑️</button>`:''}</div>`}).join('');
 
   tela.innerHTML=`
     <div class="bg-white rounded-3xl p-4 border space-y-3">
@@ -204,10 +220,7 @@ function fecharSemana(){
   dados.feitos={}; salvar(); alert(msg || 'Sem filhas'); toast('Semana fechada!');
 }
 
-// ===== BACKUP - A PARTE MAIS IMPORTANTE =====
-// Gera um código que a filha manda pra mãe no WhatsApp
 function gerarBackup(){
-  // Código simples: transforma os dados em texto
   const texto = btoa(unescape(encodeURIComponent(JSON.stringify(dados))));
   codigoBackupAtual = texto;
   document.getElementById('backup-titulo').textContent='📤 Seu Código de Backup';
@@ -230,7 +243,6 @@ function abrirImportar(){
       if(!texto) return;
       const novo=JSON.parse(decodeURIComponent(escape(atob(texto))));
       if(!novo.filhas) throw new Error('invalido');
-      // Mantém seu PIN de mãe, usa o resto da filha
       novo.pin = dados.pin;
       dados = novo; salvar(); fechar('modal-backup'); toast('Backup da filha importado! ✅');
     }catch(e){ toast('Código inválido. Pede pra ela gerar de novo.'); }
