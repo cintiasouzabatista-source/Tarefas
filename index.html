@@ -26,7 +26,6 @@
 
 <main class="max-w-md mx-auto px-4 mt-4 space-y-3">
   <div id="abas" class="flex gap-2 overflow-x-auto no-scrollbar"></div>
-
   <div id="painel-pais" class="hidden bg-slate-900 text-white p-3 rounded-2xl">
     <p class="text-xs font-extrabold mb-2 text-center">MODO PAIS ATIVO - <button onclick="sairPais()" class="text-amber-300 underline">Sair</button></p>
     <div class="grid grid-cols-3 gap-2">
@@ -39,9 +38,7 @@
       <button onclick="abrirImportar()" class="bg-white text-slate-900 py-2.5 rounded-xl text-xs font-black">📥 Importar Backup</button>
     </div>
   </div>
-
   <div id="tela" class="space-y-3"></div>
-
   <div class="bg-amber-50 border border-amber-200 rounded-3xl p-4 space-y-2">
     <h3 class="font-black text-sm text-amber-900">📦 Backup da Semana</h3>
     <p class="text-xs font-bold text-amber-800">No fim da semana, toque aqui e mande o código pra mamãe no WhatsApp.</p>
@@ -78,14 +75,11 @@
 <div id="modal-tarefa" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
   <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3 max-h-[90vh] overflow-y-auto">
     <h2 id="titulo-tarefa" class="font-black">Nova Tarefa</h2>
-    
-    <!-- LISTA PRONTA -->
     <div class="bg-indigo-50 rounded-2xl p-3 space-y-2">
       <p class="text-xs font-extrabold text-indigo-900">✨ Tarefas prontas - toca pra escolher</p>
       <div id="tarefas-prontas" class="flex gap-1.5 flex-wrap"></div>
       <button onclick="cadastrarTarefaPronta()" class="text-xs font-extrabold text-indigo-600">+ Cadastrar nova tarefa pronta</button>
     </div>
-
     <input id="tarefa-nome" placeholder="Ex: Lavar louça..." class="w-full px-3 py-2.5 bg-slate-100 rounded-xl font-bold outline-none">
     <div><p class="text-xs font-extrabold text-slate-500">Ícone</p><div id="icones" class="flex gap-1.5 mt-1 flex-wrap"></div></div>
     <div><p class="text-xs font-extrabold text-slate-500">Para quem?</p><div id="tarefa-para" class="flex gap-1.5 mt-1 flex-wrap"></div></div>
@@ -121,28 +115,22 @@ if(!dados.folgas) dados.folgas = {};
 if(!dados.valor) dados.valor = 1.99;
 let souPais=false, aba='filhas', avatarSel='👧', iconeSel='🍽️', paraSel='todas', diasSel=[1,2,3,4,5], diaVendo=new Date().getDay();
 let editandoId=null;
-
 function salvar(){ localStorage.setItem('tarefas_simples', JSON.stringify(dados)); render(); }
 function toast(m){ const t=document.getElementById('toast'); document.getElementById('toast-msg').textContent=m; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'),4000); }
 function abrir(id){ document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
 function fechar(id){ document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
 window.fechar=fechar;
-
 document.getElementById('data-hoje').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'short'});
-
 function irParaFilhas(){ aba = dados.filhas.length>0 ? dados.filhas[0].id : 'premios'; souPais=false; document.getElementById('painel-pais').classList.add('hidden'); document.getElementById('btn-pais').textContent='🔒 Pais'; render(); }
 function abrirPais(){ if(souPais){ sairPais(); return; } document.getElementById('pin-input').value=''; document.getElementById('pin-erro').classList.add('hidden'); abrir('modal-pin'); setTimeout(()=>document.getElementById('pin-input').focus(),100); }
 function mostrarPin(){ const inp=document.getElementById('pin-input'); inp.type = inp.type==='password' ? 'tel' : 'password'; }
 function confirmarPin(){ const v=document.getElementById('pin-input').value.trim(); if(v===String(dados.pin)){ souPais=true; fechar('modal-pin'); document.getElementById('painel-pais').classList.remove('hidden'); document.getElementById('btn-pais').textContent='🔓 Sair'; toast('Modo Pais ativado!'); render(); } else { document.getElementById('pin-erro').classList.remove('hidden'); } }
 function resetarPin(){ if(!confirm('Resetar o PIN para 1234?')) return; dados.pin='1234'; salvar(); toast('PIN resetado para 1234!'); }
 function sairPais(){ souPais=false; document.getElementById('painel-pais').classList.add('hidden'); document.getElementById('btn-pais').textContent='🔒 Pais'; render(); }
-
 const AVATARES=['👧','🧒','🌟','🦋','🐱','🦄','🌸','👩'];
 function abrirModalFilha(){ document.getElementById('filha-nome').value=''; avatarSel=AVATARES[0]; document.getElementById('avatares').innerHTML=AVATARES.map(a=>`<button onclick="avatarSel='${a}'" class="text-2xl p-2 bg-slate-100 rounded-xl">${a}</button>`).join(''); abrir('modal-filha'); }
 function salvarFilha(){ const nome=document.getElementById('filha-nome').value.trim(); if(!nome) return; dados.filhas.push({id:Date.now().toString(), nome, avatar:avatarSel, xp:0, pontos:0}); fechar('modal-filha'); salvar(); }
-
-const ICONES=['🍽️','🧹','🗑️','🛏️','📚','📖','👕','🐕','🪴','🧽','✨'];
-  // LISTA PRONTA DE TAREFAS DE CASA
+const ICONES=['🍽️','🧹','🗑️','🛏️','📚','📖','👕','🐕','🪴','🧽','✨','🚽','🍂'];
 let TAREFAS_PRONTAS = JSON.parse(localStorage.getItem('tarefas_prontas') || 'null') || [
   {nome:'Lavar Louça', icone:'🍽️'},
   {nome:'Guardar Louça', icone:'🍽️'},
@@ -160,30 +148,29 @@ let TAREFAS_PRONTAS = JSON.parse(localStorage.getItem('tarefas_prontas') || 'nul
   {nome:'Estender Roupas', icone:'👕'},
   {nome:'Dia da Leitura', icone:'📚'},
 ];
-
 function renderTarefasProntas(){
-  const el = document.getElementById('tarefas-prontas');
+  const el=document.getElementById('tarefas-prontas');
   if(!el) return;
-  el.innerHTML = TAREFAS_PRONTAS.map((t,i)=>`<button onclick="selecionarPronta(${i})" class="px-2.5 py-1.5 rounded-full bg-white border text-xs font-extrabold text-left">${t.icone} ${t.nome}</button>`).join('');
+  el.innerHTML=TAREFAS_PRONTAS.map((t,i)=>`<button onclick="selecionarPronta(${i})" class="px-2.5 py-1.5 rounded-full bg-white border text-xs font-extrabold text-left">${t.icone} ${t.nome}</button>`).join('');
 }
 function selecionarPronta(i){
-  const t = TAREFAS_PRONTAS[i];
-  document.getElementById('tarefa-nome').value = t.nome;
-  iconeSel = t.icone;
+  const t=TAREFAS_PRONTAS[i];
+  document.getElementById('tarefa-nome').value=t.nome;
+  iconeSel=t.icone;
   renderFormTarefa();
 }
 function cadastrarTarefaPronta(){
-  const nome = prompt('Nome da nova tarefa pronta:\nEx: Limpar Geladeira');
+  const nome=prompt('Nome da nova tarefa pronta:\nEx: Limpar Geladeira');
   if(!nome) return;
-  const icone = prompt('Qual ícone? Pode colar um emoji:\nEx: 🧊 🍳 🐱') || '✨';
-  TAREFAS_PRONTAS.push({nome: nome.trim(), icone: icone.trim()});
+  const icone=prompt('Qual ícone? Pode colar um emoji:\nEx: 🧊 🍳 🐱') || '✨';
+  TAREFAS_PRONTAS.push({nome:nome.trim(), icone:icone.trim()});
   localStorage.setItem('tarefas_prontas', JSON.stringify(TAREFAS_PRONTAS));
   renderTarefasProntas();
   toast('Tarefa pronta salva! ✨');
 }
 function abrirModalTarefa(idEditar){
   if(dados.filhas.length===0){ toast('Cadastre uma filha primeiro!'); return; }
-  editandoId = idEditar || null;
+  editandoId=idEditar || null;
   if(idEditar){
     const t=dados.tarefas.find(x=>x.id===idEditar);
     if(!t) return;
@@ -195,10 +182,8 @@ function abrirModalTarefa(idEditar){
   }
   renderFormTarefa(); abrir('modal-tarefa');
 }
-
-  function renderFormTarefa(){
-  renderTarefasProntas(); // <-- ADICIONA ESSA LINHA
-  document.getElementById('icones').innerHTML=...
+function renderFormTarefa(){
+  renderTarefasProntas();
   document.getElementById('icones').innerHTML=ICONES.map(i=>`<button onclick="iconeSel='${i}';renderFormTarefa()" class="p-2 rounded-xl ${iconeSel===i?'bg-indigo-100 border-2 border-indigo-600':'bg-slate-100'}">${i}</button>`).join('');
   let h=`<button onclick="paraSel='todas';renderFormTarefa()" class="px-3 py-1.5 rounded-xl text-xs font-extrabold ${paraSel==='todas'?'bg-indigo-600 text-white':'bg-slate-100'}">Todas</button>`;
   h+=`<button onclick="paraSel='revezamento';renderFormTarefa()" class="px-3 py-1.5 rounded-xl text-xs font-extrabold ${paraSel==='revezamento'?'bg-amber-500 text-white':'bg-slate-100'}">🔄 Revezar</button>`;
@@ -207,7 +192,7 @@ function abrirModalTarefa(idEditar){
   const dias=[['Seg',1],['Ter',2],['Qua',3],['Qui',4],['Sex',5],['Sáb',6],['Dom',0]];
   document.getElementById('tarefa-dias').innerHTML=dias.map(([n,d])=>`<button onclick="toggleDia(${d})" class="px-3 py-1.5 rounded-xl text-xs font-extrabold ${diasSel.includes(d)?'bg-indigo-600 text-white':'bg-slate-100'}">${n}</button>`).join('');
 }
-function toggleDia(d){ diasSel = diasSel.includes(d) ? diasSel.filter(x=>x!==d) : [...diasSel,d]; renderFormTarefa(); }
+function toggleDia(d){ diasSel=diasSel.includes(d)?diasSel.filter(x=>x!==d):[...diasSel,d]; renderFormTarefa(); }
 function salvarTarefa(){
   const nome=document.getElementById('tarefa-nome').value.trim();
   if(!nome||diasSel.length===0) return;
@@ -221,10 +206,8 @@ function salvarTarefa(){
   }
   editandoId=null; fechar('modal-tarefa'); salvar();
 }
-
 function abrirModalValor(){ document.getElementById('valor-input').value=dados.valor; abrir('modal-valor'); }
 function salvarValor(){ const v=parseFloat(document.getElementById('valor-input').value); if(!isNaN(v)){ dados.valor=v; } fechar('modal-valor'); salvar(); }
-
 function filhaDaVezRevezamento(dia){
   if(dados.filhas.length===0) return null;
   const semana=Math.floor(Date.now()/(1000*60*60*24*7));
@@ -255,7 +238,6 @@ function folgarDia(filhaId, dia){
   else { if(!confirm('Dar folga pra ela nesse dia? As tarefas somem e não contam ponto.')) return; dados.folgas[chave]=true; toast('Folga marcada! 😴'); }
   salvar();
 }
-
 function render(){
   if(aba==='filhas' && dados.filhas.length>0) aba=dados.filhas[0].id;
   const abas=document.getElementById('abas');
@@ -283,7 +265,6 @@ function render(){
   if(estaDeFolga) tarefasHtml=`<div class="bg-slate-800 text-white rounded-3xl p-6 text-center"><p class="text-sm font-extrabold">😴 Hoje é folga da ${filha.nome}!</p><p class="text-xs font-bold text-slate-300">Aproveita o descanso 💖</p></div>`;
   else if(lista.length===0) tarefasHtml=`<div class="bg-white rounded-3xl p-6 text-center"><p class="text-sm font-extrabold">Sem tarefas neste dia ✨</p></div>`;
   else tarefasHtml=lista.map(t=>{ const chave=`${t.id}_${filha.id}_${diaVendo}`; const ok=!!dados.feitos[chave]; return `<div class="bg-white rounded-2xl p-3.5 border flex items-center justify-between ${ok?'border-emerald-300 bg-emerald-50/30':''}"><button onclick="marcar('${t.id}','${filha.id}',${diaVendo})" class="flex items-center gap-3 flex-1 text-left"><span class="w-6 h-6 rounded-lg border-2 flex items-center justify-center ${ok?'bg-emerald-500 border-emerald-500 text-white text-xs font-black':'border-slate-300'}">${ok?'✓':''}</span><span class="text-xl">${t.icone}</span><span class="font-extrabold text-sm ${ok?'line-through text-slate-400':''}">${t.nome} ${t.para==='revezamento'?'<span class="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">🔄 Sua vez</span>':''}</span></button>${souPais?`<div class="flex gap-1 shrink-0"><button onclick="abrirModalTarefa('${t.id}')" class="px-1">✏️</button><button onclick="excluirTarefa('${t.id}')" class="px-1">🗑️</button></div>`:''}</div>`}).join('');
-
   tela.innerHTML=`
     <div class="bg-white rounded-3xl p-4 border space-y-3">
       <div class="flex justify-between items-center"><div class="flex gap-2.5 items-center"><span class="text-3xl">${filha.avatar}</span><div><h2 class="font-black">${filha.nome} ${souPais?`<button onclick="excluirFilha('${filha.id}')" class="text-xs text-rose-500">🗑️</button>`:''}</h2><p class="text-xs font-bold text-slate-400">${filha.xp} XP</p></div></div><div class="text-right"><span class="font-black text-emerald-600">R$ ${(filha.pontos*dados.valor).toFixed(2).replace('.',',')}</span><p class="text-[11px] font-bold text-slate-400">${filha.pontos} pt(s)</p></div></div>
@@ -294,7 +275,6 @@ function render(){
     <div class="space-y-2">${tarefasHtml}</div>
   `;
 }
-
 function marcar(tarefaId, filhaId, dia){
   const chave=`${tarefaId}_${filhaId}_${dia}`;
   const filha=dados.filhas.find(f=>f.id===filhaId);
