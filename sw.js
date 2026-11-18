@@ -1,19 +1,16 @@
-const CACHE_NAME = 'Saldo'; // <-- Mudamos para v7 para forçar a atualização
+const CACHE_NAME = 'tarefas-familia-v7'; // <-- Mudamos para v7 para forçar a atualização
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        // Lista de URLs locais para salvar no cache
+        // Só arquivos que REALMENTE existem no seu app novo
         const urls = [
           './',
           './index.html',
-          './style.css',
-          './script.js',
           './manifest.json',
           './icon-192x192.png',
-          './icon-512x512.png',
-          './favicon.png'
+          './icon-512x512.png'
         ];
         
         return Promise.all(
@@ -41,8 +38,6 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   
-  // Estratégia Network-First: Tenta buscar a versão mais recente na rede. 
-  // Se falhar (offline), usa o que está na cache.
   event.respondWith(
     fetch(event.request)
       .then(response => {
