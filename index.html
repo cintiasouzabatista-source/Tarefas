@@ -13,7 +13,6 @@
 <style>body{font-family:'Nunito',sans-serif;background:#F8FAFC} .no-scrollbar::-webkit-scrollbar{display:none}</style>
 </head>
 <body class="pb-24 text-slate-800 select-none">
-
 <header class="bg-indigo-600 text-white px-4 py-4 rounded-b-3xl sticky top-0 z-30">
   <div class="max-w-md mx-auto flex items-center justify-between">
     <div><h1 class="text-xl font-black">Tarefas 🏡</h1><p id="data-hoje" class="text-xs font-bold text-indigo-200"></p></div>
@@ -23,7 +22,6 @@
     </div>
   </div>
 </header>
-
 <main class="max-w-md mx-auto px-4 mt-4 space-y-3">
   <div id="abas" class="flex gap-2 overflow-x-auto no-scrollbar"></div>
   <div id="painel-pais" class="hidden bg-slate-900 text-white p-3 rounded-2xl">
@@ -35,24 +33,22 @@
     </div>
     <div class="grid grid-cols-2 gap-2 mt-2">
       <button onclick="fecharSemana()" class="bg-emerald-500 py-2.5 rounded-xl text-xs font-black">🏁 Fechar Semana</button>
-      <div class="grid grid-cols-2 gap-2 mt-2">
-  <button onclick="resetarChecks()" class="bg-rose-500 py-2.5 rounded-xl text-xs font-black">🔄 Zerar Checks de Todas</button>
-  <button onclick="abrirModalTrocarPin()" class="bg-white text-slate-900 py-2.5 rounded-xl text-xs font-black">🔐 Trocar PIN</button>
-</div>
       <button onclick="abrirImportar()" class="bg-white text-slate-900 py-2.5 rounded-xl text-xs font-black">📥 Importar Backup</button>
+    </div>
+    <div class="grid grid-cols-2 gap-2 mt-2">
+      <button onclick="resetarChecks()" class="bg-rose-500 py-2.5 rounded-xl text-xs font-black">🔄 Zerar Checks de Todas</button>
+      <button onclick="abrirModalTrocarPin()" class="bg-white text-slate-900 py-2.5 rounded-xl text-xs font-black">🔐 Trocar PIN</button>
     </div>
   </div>
   <div id="tela" class="space-y-3"></div>
   <div class="bg-amber-50 border border-amber-200 rounded-3xl p-4 space-y-2">
     <h3 class="font-black text-sm text-amber-900">📦 Backup da Semana</h3>
-    <p class="text-xs font-bold text-amber-800">No fim da semana, toque aqui e mande o código pra mamãe no WhatsApp.</p>
+    <p class="text-xs font-bold text-amber-800">No fim do dia, toque aqui e mande o código pra mamãe no WhatsApp.</p>
     <button onclick="gerarBackup()" class="w-full bg-amber-500 text-white py-3 rounded-2xl font-black text-sm">📤 Gerar Código e Mandar pra Mamãe</button>
     <p id="backup-info" class="text-[11px] font-bold text-amber-700 text-center"></p>
   </div>
 </main>
-
 <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-slate-900 text-white p-3.5 rounded-2xl shadow-xl hidden z-50"><p id="toast-msg" class="text-xs font-bold"></p></div>
-
 <div id="modal-pin" class="fixed inset-0 bg-black/60 z-[100] hidden items-center justify-center p-4">
   <div class="bg-white w-full max-w-xs rounded-3xl p-5 text-center space-y-3">
     <h2 class="font-black">🔐 PIN dos Pais</h2>
@@ -66,7 +62,6 @@
     <button onclick="resetarPin()" class="text-xs font-bold text-indigo-600 underline">Esqueci o PIN - resetar</button>
   </div>
 </div>
-
 <div id="modal-filha" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
   <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3">
     <h2 class="font-black">Cadastrar Filha</h2>
@@ -75,7 +70,6 @@
     <div class="grid grid-cols-2 gap-2"><button onclick="fechar('modal-filha')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Cancelar</button><button onclick="salvarFilha()" class="bg-indigo-600 text-white py-2.5 rounded-xl font-extrabold text-sm">Salvar</button></div>
   </div>
 </div>
-
 <div id="modal-tarefa" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
   <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3 max-h-[90vh] overflow-y-auto">
     <h2 id="titulo-tarefa" class="font-black">Nova Tarefa</h2>
@@ -91,7 +85,6 @@
     <div class="grid grid-cols-2 gap-2"><button onclick="fechar('modal-tarefa')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Cancelar</button><button onclick="salvarTarefa()" class="bg-emerald-600 text-white py-2.5 rounded-xl font-extrabold text-sm">Salvar</button></div>
   </div>
 </div>
-
 <div id="modal-valor" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
   <div class="bg-white w-full max-w-xs rounded-3xl p-5 space-y-3">
     <h2 class="font-black">🪙 Valor do Ponto</h2>
@@ -100,7 +93,6 @@
     <div class="grid grid-cols-2 gap-2"><button onclick="fechar('modal-valor')" class="bg-slate-100 py-2.5 rounded-xl font-extrabold text-sm">Cancelar</button><button onclick="salvarValor()" class="bg-amber-500 text-white py-2.5 rounded-xl font-extrabold text-sm">Salvar</button></div>
   </div>
 </div>
-
 <div id="modal-backup" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
   <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3">
     <h2 id="backup-titulo" class="font-black">📦 Backup</h2>
@@ -112,7 +104,6 @@
     </div>
   </div>
 </div>
-
 <script>
 let dados = JSON.parse(localStorage.getItem('tarefas_simples') || 'null') || { pin:'1234', valor:1.99, filhas:[], tarefas:[], feitos:{} };
 if(!dados.folgas) dados.folgas = {};
@@ -130,60 +121,23 @@ function abrirPais(){ if(souPais){ sairPais(); return; } document.getElementById
 function mostrarPin(){ const inp=document.getElementById('pin-input'); inp.type = inp.type==='password' ? 'tel' : 'password'; }
 function confirmarPin(){ const v=document.getElementById('pin-input').value.trim(); if(v===String(dados.pin)){ souPais=true; fechar('modal-pin'); document.getElementById('painel-pais').classList.remove('hidden'); document.getElementById('btn-pais').textContent='🔓 Sair'; toast('Modo Pais ativado!'); render(); } else { document.getElementById('pin-erro').classList.remove('hidden'); } }
 function resetarPin(){ if(!confirm('Resetar o PIN para 1234?')) return; dados.pin='1234'; salvar(); toast('PIN resetado para 1234!'); }
+function abrirModalTrocarPin(){ const novo=prompt('Novo PIN de 4 números:'); if(!novo) return; if(novo.length!==4 || isNaN(novo)){ alert('Tem que ser 4 números!'); return; } const conf=prompt('Confirma o PIN novo:'); if(conf!==novo){ alert('Não bateu, tenta de novo!'); return; } dados.pin=novo; salvar(); alert('PIN novo salvo! Anota aí: '+novo); }
 function sairPais(){ souPais=false; document.getElementById('painel-pais').classList.add('hidden'); document.getElementById('btn-pais').textContent='🔒 Pais'; render(); }
 const AVATARES=['👧','🧒','🌟','🦋','🐱','🦄','🌸','👩'];
 function abrirModalFilha(){ document.getElementById('filha-nome').value=''; avatarSel=AVATARES[0]; document.getElementById('avatares').innerHTML=AVATARES.map(a=>`<button onclick="avatarSel='${a}'" class="text-2xl p-2 bg-slate-100 rounded-xl">${a}</button>`).join(''); abrir('modal-filha'); }
 function salvarFilha(){ const nome=document.getElementById('filha-nome').value.trim(); if(!nome) return; dados.filhas.push({id:Date.now().toString(), nome, avatar:avatarSel, xp:0, pontos:0}); fechar('modal-filha'); salvar(); }
 const ICONES=['🍽️','🧹','🗑️','🛏️','📚','📖','👕','🐕','🪴','🧽','✨','🚽','🍂'];
 let TAREFAS_PRONTAS = JSON.parse(localStorage.getItem('tarefas_prontas') || 'null') || [
-  {nome:'Lavar Louça', icone:'🍽️'},
-  {nome:'Guardar Louça', icone:'🍽️'},
-  {nome:'Varrer Casa', icone:'🧹'},
-  {nome:'Recolher Lixo', icone:'🗑️'},
-  {nome:'Passar Pano', icone:'🧽'},
-  {nome:'Dobrar Roupas', icone:'👕'},
-  {nome:'Lavar Banheiro', icone:'🚽'},
-  {nome:'Organizar Quarto', icone:'🛏️'},
-  {nome:'Arrumar as Camas', icone:'🛏️'},
-  {nome:'Colocar Ração e Água Gato/Cachorro', icone:'🐕'},
-  {nome:'Varrer Quintal', icone:'🍂'},
-  {nome:'Tirar Pó dos Móveis', icone:'✨'},
-  {nome:'Lavar Roupas', icone:'👕'},
-  {nome:'Estender Roupas', icone:'👕'},
-  {nome:'Dia da Leitura', icone:'📚'},
+  {nome:'Lavar Louça', icone:'🍽️'},{nome:'Guardar Louça', icone:'🍽️'},{nome:'Varrer Casa', icone:'🧹'},{nome:'Recolher Lixo', icone:'🗑️'},{nome:'Passar Pano', icone:'🧽'},{nome:'Dobrar Roupas', icone:'👕'},{nome:'Lavar Banheiro', icone:'🚽'},{nome:'Organizar Quarto', icone:'🛏️'},{nome:'Arrumar as Camas', icone:'🛏️'},{nome:'Colocar Ração e Água Gato/Cachorro', icone:'🐕'},{nome:'Varrer Quintal', icone:'🍂'},{nome:'Tirar Pó dos Móveis', icone:'✨'},{nome:'Lavar Roupas', icone:'👕'},{nome:'Estender Roupas', icone:'👕'},{nome:'Dia da Leitura', icone:'📚'},
 ];
-function renderTarefasProntas(){
-  const el=document.getElementById('tarefas-prontas');
-  if(!el) return;
-  el.innerHTML=TAREFAS_PRONTAS.map((t,i)=>`<button onclick="selecionarPronta(${i})" class="px-2.5 py-1.5 rounded-full bg-white border text-xs font-extrabold text-left">${t.icone} ${t.nome}</button>`).join('');
-}
-function selecionarPronta(i){
-  const t=TAREFAS_PRONTAS[i];
-  document.getElementById('tarefa-nome').value=t.nome;
-  iconeSel=t.icone;
-  renderFormTarefa();
-}
-function cadastrarTarefaPronta(){
-  const nome=prompt('Nome da nova tarefa pronta:\nEx: Limpar Geladeira');
-  if(!nome) return;
-  const icone=prompt('Qual ícone? Pode colar um emoji:\nEx: 🧊 🍳 🐱') || '✨';
-  TAREFAS_PRONTAS.push({nome:nome.trim(), icone:icone.trim()});
-  localStorage.setItem('tarefas_prontas', JSON.stringify(TAREFAS_PRONTAS));
-  renderTarefasProntas();
-  toast('Tarefa pronta salva! ✨');
-}
+function renderTarefasProntas(){ const el=document.getElementById('tarefas-prontas'); if(!el) return; el.innerHTML=TAREFAS_PRONTAS.map((t,i)=>`<button onclick="selecionarPronta(${i})" class="px-2.5 py-1.5 rounded-full bg-white border text-xs font-extrabold text-left">${t.icone} ${t.nome}</button>`).join(''); }
+function selecionarPronta(i){ const t=TAREFAS_PRONTAS[i]; document.getElementById('tarefa-nome').value=t.nome; iconeSel=t.icone; renderFormTarefa(); }
+function cadastrarTarefaPronta(){ const nome=prompt('Nome da nova tarefa pronta:'); if(!nome) return; const icone=prompt('Qual ícone? Cola um emoji:') || '✨'; TAREFAS_PRONTAS.push({nome:nome.trim(), icone:icone.trim()}); localStorage.setItem('tarefas_prontas', JSON.stringify(TAREFAS_PRONTAS)); renderTarefasProntas(); toast('Tarefa pronta salva! ✨'); }
 function abrirModalTarefa(idEditar){
   if(dados.filhas.length===0){ toast('Cadastre uma filha primeiro!'); return; }
   editandoId=idEditar || null;
-  if(idEditar){
-    const t=dados.tarefas.find(x=>x.id===idEditar);
-    if(!t) return;
-    document.getElementById('titulo-tarefa').textContent='Editar Tarefa ✏️';
-    document.getElementById('tarefa-nome').value=t.nome; iconeSel=t.icone; paraSel=t.para; diasSel=[...t.dias];
-  } else {
-    document.getElementById('titulo-tarefa').textContent='Nova Tarefa';
-    document.getElementById('tarefa-nome').value=''; iconeSel=ICONES[0]; paraSel='todas'; diasSel=[1,2,3,4,5];
-  }
+  if(idEditar){ const t=dados.tarefas.find(x=>x.id===idEditar); if(!t) return; document.getElementById('titulo-tarefa').textContent='Editar Tarefa ✏️'; document.getElementById('tarefa-nome').value=t.nome; iconeSel=t.icone; paraSel=t.para; diasSel=[...t.dias]; }
+  else { document.getElementById('titulo-tarefa').textContent='Nova Tarefa'; document.getElementById('tarefa-nome').value=''; iconeSel=ICONES[0]; paraSel='todas'; diasSel=[1,2,3,4,5]; }
   renderFormTarefa(); abrir('modal-tarefa');
 }
 function renderFormTarefa(){
@@ -198,50 +152,19 @@ function renderFormTarefa(){
 }
 function toggleDia(d){ diasSel=diasSel.includes(d)?diasSel.filter(x=>x!==d):[...diasSel,d]; renderFormTarefa(); }
 function salvarTarefa(){
-  const nome=document.getElementById('tarefa-nome').value.trim();
-  if(!nome||diasSel.length===0) return;
-  if(editandoId){
-    const t=dados.tarefas.find(x=>x.id===editandoId);
-    if(t){ t.nome=nome; t.icone=iconeSel; t.para=paraSel; t.dias=diasSel; }
-    toast('Tarefa editada! ✏️');
-  } else {
-    dados.tarefas.push({id:Date.now().toString(), nome, icone:iconeSel, para:paraSel, dias:diasSel});
-    toast('Tarefa salva!');
-  }
+  const nome=document.getElementById('tarefa-nome').value.trim(); if(!nome||diasSel.length===0) return;
+  if(editandoId){ const t=dados.tarefas.find(x=>x.id===editandoId); if(t){ t.nome=nome; t.icone=iconeSel; t.para=paraSel; t.dias=diasSel; } toast('Tarefa editada! ✏️'); }
+  else { dados.tarefas.push({id:Date.now().toString(), nome, icone:iconeSel, para:paraSel, dias:diasSel}); toast('Tarefa salva!'); }
   editandoId=null; fechar('modal-tarefa'); salvar();
 }
 function abrirModalValor(){ document.getElementById('valor-input').value=dados.valor; abrir('modal-valor'); }
 function salvarValor(){ const v=parseFloat(document.getElementById('valor-input').value); if(!isNaN(v)){ dados.valor=v; } fechar('modal-valor'); salvar(); }
-function filhaDaVezRevezamento(dia){
-  if(dados.filhas.length===0) return null;
-  const semana=Math.floor(Date.now()/(1000*60*60*24*7));
-  const indice=(dia+semana)%dados.filhas.length;
-  return dados.filhas[indice];
-}
-function tarefasDaFilha(filhaId, dia){
-  if(dados.folgas[`${filhaId}_${dia}`]) return [];
-  return dados.tarefas.filter(t=>{
-    if(!t.dias.includes(dia)) return false;
-    if(t.para==='todas') return true;
-    if(t.para===filhaId) return true;
-    if(t.para==='revezamento'){ const vez=filhaDaVezRevezamento(dia); return vez && vez.id===filhaId; }
-    return false;
-  });
-}
-function statsFilha(id){
-  let tot=0, feito=0;
-  [0,1,2,3,4,5,6].forEach(d=>{
-    tarefasDaFilha(id,d).forEach(t=>{ tot++; if(dados.feitos[`${t.id}_${id}_${d}`]) feito++; });
-  });
-  return {tot, feito, pct: tot?Math.round(feito/tot*100):0};
-}
-function folgarDia(filhaId, dia){
-  if(!souPais) return;
-  const chave=`${filhaId}_${dia}`;
-  if(dados.folgas[chave]){ delete dados.folgas[chave]; toast('Folga cancelada!'); }
-  else { if(!confirm('Dar folga pra ela nesse dia? As tarefas somem e não contam ponto.')) return; dados.folgas[chave]=true; toast('Folga marcada! 😴'); }
-  salvar();
-}
+function filhaDaVezRevezamento(dia){ if(dados.filhas.length===0) return null; const semana=Math.floor(Date.now()/(1000*60*60*24*7)); const indice=(dia+semana)%dados.filhas.length; return dados.filhas[indice]; }
+function tarefasDaFilha(filhaId, dia){ if(dados.folgas[`${filhaId}_${dia}`]) return []; return dados.tarefas.filter(t=>{ if(!t.dias.includes(dia)) return false; if(t.para==='todas') return true; if(t.para===filhaId) return true; if(t.para==='revezamento'){ const vez=filhaDaVezRevezamento(dia); return vez && vez.id===filhaId; } return false; }); }
+function statsFilha(id){ let tot=0, feito=0; [0,1,2,3,4,5,6].forEach(d=>{ tarefasDaFilha(id,d).forEach(t=>{ tot++; if(dados.feitos[`${t.id}_${id}_${d}`]) feito++; }); }); return {tot, feito, pct: tot?Math.round(feito/tot*100):0}; }
+function folgarDia(filhaId, dia){ if(!souPais) return; const chave=`${filhaId}_${dia}`; if(dados.folgas[chave]){ delete dados.folgas[chave]; toast('Folga cancelada!'); } else { if(!confirm('Dar folga pra ela nesse dia?')) return; dados.folgas[chave]=true; toast('Folga marcada! 😴'); } salvar(); }
+function resetarChecks(){ if(!souPais) return; if(!confirm('Zerar os checks de TODAS as filhas? As tarefas continuam, só os ✓ que somem.')) return; dados.feitos={}; salvar(); toast('Checks zerados de todas! 🔄'); }
+function resetarChecksFilha(filhaId){ if(!souPais) return; const filha=dados.filhas.find(f=>f.id===filhaId); if(!confirm(`Zerar os checks da ${filha.nome}?`)) return; Object.keys(dados.feitos).forEach(ch=>{ if(ch.includes(`_${filhaId}_`)) delete dados.feitos[ch]; }); salvar(); toast(`Checks da ${filha.nome} zerados!`); }
 function render(){
   if(aba==='filhas' && dados.filhas.length>0) aba=dados.filhas[0].id;
   const abas=document.getElementById('abas');
@@ -252,17 +175,10 @@ function render(){
     return;
   }
   const filha=dados.filhas.find(f=>f.id===aba);
-  if(!filha){
-    tela.innerHTML=`<div class="bg-white rounded-3xl p-8 text-center space-y-2"><div class="text-4xl">👨‍👩‍👧</div><h2 class="font-black">Nenhuma filha cadastrada</h2><p class="text-xs font-bold text-slate-400">Toque em 🔒 Pais > + Filha</p></div>`;
-    return;
-  }
+  if(!filha){ tela.innerHTML=`<div class="bg-white rounded-3xl p-8 text-center space-y-2"><div class="text-4xl">👨‍👩‍👧</div><h2 class="font-black">Nenhuma filha cadastrada</h2><p class="text-xs font-bold text-slate-400">Toque em 🔒 Pais > + Filha</p></div>`; return; }
   const s=statsFilha(filha.id);
   const nomesDias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-  const diasHtml=[1,2,3,4,5,6,0].map(d=>{
-    const temTarefa=tarefasDaFilha(filha.id,d).length>0;
-    const ehFolga=!!dados.folgas[`${filha.id}_${d}`];
-    return `<button onclick="diaVendo=${d};render()" class="flex-1 py-2 rounded-xl text-xs font-extrabold ${diaVendo===d?'bg-indigo-600 text-white':'text-slate-500'}">${nomesDias[d]}${ehFolga?'<span class="block text-[8px]">😴</span>':((d===0||d===6)&&!temTarefa?'<span class="block text-[8px] opacity-60">Folga</span>':'')}</button>`;
-  }).join('');
+  const diasHtml=[1,2,3,4,5,6,0].map(d=>{ const temTarefa=tarefasDaFilha(filha.id,d).length>0; const ehFolga=!!dados.folgas[`${filha.id}_${d}`]; return `<button onclick="diaVendo=${d};render()" class="flex-1 py-2 rounded-xl text-xs font-extrabold ${diaVendo===d?'bg-indigo-600 text-white':'text-slate-500'}">${nomesDias[d]}${ehFolga?'<span class="block text-[8px]">😴</span>':((d===0||d===6)&&!temTarefa?'<span class="block text-[8px] opacity-60">Folga</span>':'')}</button>`; }).join('');
   const lista=tarefasDaFilha(filha.id, diaVendo);
   const estaDeFolga=!!dados.folgas[`${filha.id}_${diaVendo}`];
   let tarefasHtml='';
@@ -271,7 +187,7 @@ function render(){
   else tarefasHtml=lista.map(t=>{ const chave=`${t.id}_${filha.id}_${diaVendo}`; const ok=!!dados.feitos[chave]; return `<div class="bg-white rounded-2xl p-3.5 border flex items-center justify-between ${ok?'border-emerald-300 bg-emerald-50/30':''}"><button onclick="marcar('${t.id}','${filha.id}',${diaVendo})" class="flex items-center gap-3 flex-1 text-left"><span class="w-6 h-6 rounded-lg border-2 flex items-center justify-center ${ok?'bg-emerald-500 border-emerald-500 text-white text-xs font-black':'border-slate-300'}">${ok?'✓':''}</span><span class="text-xl">${t.icone}</span><span class="font-extrabold text-sm ${ok?'line-through text-slate-400':''}">${t.nome} ${t.para==='revezamento'?'<span class="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">🔄 Sua vez</span>':''}</span></button>${souPais?`<div class="flex gap-1 shrink-0"><button onclick="abrirModalTarefa('${t.id}')" class="px-1">✏️</button><button onclick="excluirTarefa('${t.id}')" class="px-1">🗑️</button></div>`:''}</div>`}).join('');
   tela.innerHTML=`
     <div class="bg-white rounded-3xl p-4 border space-y-3">
-      <div class="flex justify-between items-center"><div class="flex gap-2.5 items-center"><span class="text-3xl">${filha.avatar}</span><div><h2 class="font-black">${filha.nome} ${souPais?`<button onclick="excluirFilha('${filha.id}')" class="text-xs text-rose-500">🗑️</button>`:''}</h2><p class="text-xs font-bold text-slate-400">${filha.xp} XP</p></div></div><div class="text-right"><span class="font-black text-emerald-600">R$ ${(filha.pontos*dados.valor).toFixed(2).replace('.',',')}</span><p class="text-[11px] font-bold text-slate-400">${filha.pontos} pt(s)</p></div></div>
+      <div class="flex justify-between items-center"><div class="flex gap-2.5 items-center"><span class="text-3xl">${filha.avatar}</span><div><h2 class="font-black">${filha.nome} ${souPais?`<button onclick="excluirFilha('${filha.id}')" class="text-xs text-rose-500">🗑️</button> <button onclick="resetarChecksFilha('${filha.id}')" class="text-xs">🔄</button>`:''}</h2><p class="text-xs font-bold text-slate-400">${filha.xp} XP</p></div></div><div class="text-right"><span class="font-black text-emerald-600">R$ ${(filha.pontos*dados.valor).toFixed(2).replace('.',',')}</span><p class="text-[11px] font-bold text-slate-400">${filha.pontos} pt(s)</p></div></div>
       <div><div class="flex justify-between text-[11px] font-extrabold text-slate-400"><span>Semana</span><span>${s.feito}/${s.tot} (${s.pct}%)</span></div><div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden mt-1"><div class="h-full bg-indigo-600" style="width:${s.pct}%"></div></div></div>
     </div>
     <div class="bg-white p-1.5 rounded-2xl border flex gap-1">${diasHtml}</div>
@@ -279,95 +195,34 @@ function render(){
     <div class="space-y-2">${tarefasHtml}</div>
   `;
 }
-function marcar(tarefaId, filhaId, dia){
-  const chave=`${tarefaId}_${filhaId}_${dia}`;
-  const filha=dados.filhas.find(f=>f.id===filhaId);
-  if(dados.feitos[chave]){ delete dados.feitos[chave]; filha.xp=Math.max(0,filha.xp-10); } else { dados.feitos[chave]=true; filha.xp+=10; toast(`Muito bem, ${filha.nome}! +10 XP 💖`); }
-  salvar();
-}
+function marcar(tarefaId, filhaId, dia){ const chave=`${tarefaId}_${filhaId}_${dia}`; const filha=dados.filhas.find(f=>f.id===filhaId); if(dados.feitos[chave]){ delete dados.feitos[chave]; filha.xp=Math.max(0,filha.xp-10); } else { dados.feitos[chave]=true; filha.xp+=10; toast(`Muito bem, ${filha.nome}! +10 XP 💖`); } salvar(); }
 function excluirTarefa(id){ if(!souPais) return; if(!confirm('Excluir essa tarefa?')) return; dados.tarefas=dados.tarefas.filter(t=>t.id!==id); salvar(); }
 function excluirFilha(id){ if(!souPais) return; if(!confirm('Excluir essa filha?')) return; dados.filhas=dados.filhas.filter(f=>f.id!==id); aba='premios'; salvar(); }
-function fecharSemana(){
-  if(!souPais) return;
-  let msg='';
-  dados.filhas.forEach(f=>{ const s=statsFilha(f.id); if(s.tot>0 && s.pct===100){ f.pontos++; f.xp+=50; msg+=`${f.nome} ganhou 1 ponto! 🎉\n`; } else { msg+=`${f.nome} ficou com ${s.pct}% - tenta de novo semana que vem 💪\n`; } });
-  dados.feitos={}; dados.folgas={}; salvar(); alert(msg || 'Sem filhas'); toast('Semana fechada!');
-}
-function gerarBackup(){
-  const texto=btoa(unescape(encodeURIComponent(JSON.stringify(dados))));
-  document.getElementById('backup-titulo').textContent='📤 Seu Código de Backup';
-  document.getElementById('backup-texto').textContent='Copia esse código e manda pra mamãe no WhatsApp.';
-  document.getElementById('backup-codigo').value=texto;
-  document.getElementById('backup-acao').textContent='Copiar e Mandar no WhatsApp';
-  document.getElementById('backup-acao').onclick=()=>{ navigator.clipboard.writeText(texto).then(()=>{ window.open('https://wa.me/?text='+encodeURIComponent('Mamãe, meu backup da semana: '+texto)); toast('Código copiado!'); }); };
-  abrir('modal-backup');
-  document.getElementById('backup-info').textContent='Código gerado! Manda pra mamãe.';
-}
-  function resetarChecks(){
-  if(!souPais) return;
-  if(!confirm('Zerar os checks de TODAS as filhas? As tarefas continuam, só os ✓ que somem.')) return;
-  dados.feitos = {};
-  salvar();
-  toast('Checks zerados de todas! 🔄');
-}
-function resetarChecksFilha(filhaId){
-  if(!souPais) return;
-  const filha = dados.filhas.find(f=>f.id===filhaId);
-  if(!confirm(`Zerar os checks da ${filha.nome}?`)) return;
-  Object.keys(dados.feitos).forEach(chave=>{
-    if(chave.includes(`_${filhaId}_`)) delete dados.feitos[chave];
-  });
-  salvar();
-  toast(`Checks da ${filha.nome} zerados!`);
-}
-  function abrirModalTrocarPin(){
-  const novo = prompt('Novo PIN de 4 números:\nEx: 5678');
-  if(!novo) return;
-  if(novo.length !== 4 || isNaN(novo)){ alert('Tem que ser 4 números!'); return; }
-  dados.pin = novo;
-  salvar();
-  toast('PIN novo salvo! 🔐');
-  alert('PIN novo: ' + novo + '\nAnota aí!');
-}
+function fecharSemana(){ if(!souPais) return; let msg=''; dados.filhas.forEach(f=>{ const s=statsFilha(f.id); if(s.tot>0 && s.pct===100){ f.pontos++; f.xp+=50; msg+=`${f.nome} ganhou 1 ponto! 🎉\n`; } else { msg+=`${f.nome} ficou com ${s.pct}% - tenta de novo semana que vem 💪\n`; } }); dados.feitos={}; dados.folgas={}; salvar(); alert(msg || 'Sem filhas'); toast('Semana fechada!'); }
+function gerarBackup(){ const texto=btoa(unescape(encodeURIComponent(JSON.stringify(dados)))); document.getElementById('backup-titulo').textContent='📤 Seu Código de Backup'; document.getElementById('backup-texto').textContent='Copia esse código e manda pra mamãe no WhatsApp.'; document.getElementById('backup-codigo').value=texto; document.getElementById('backup-acao').textContent='Copiar e Mandar no WhatsApp'; document.getElementById('backup-acao').onclick=()=>{ navigator.clipboard.writeText(texto).then(()=>{ window.open('https://wa.me/?text='+encodeURIComponent('Mamãe, meu backup da semana: '+texto)); toast('Código copiado!'); }); }; abrir('modal-backup'); document.getElementById('backup-info').textContent='Código gerado! Manda pra mamãe.'; }
 function copiarBackup(){ navigator.clipboard.writeText(document.getElementById('backup-codigo').value); toast('Copiado!'); }
 function abrirImportar(){
   document.getElementById('backup-titulo').textContent='📥 Importar Backup da Filha';
-  document.getElementById('backup-texto').textContent='Cole aqui o código que sua filha mandou no WhatsApp e clique em Importar.';
+  document.getElementById('backup-texto').textContent='Cole aqui o código que sua filha mandou. Ele vai JUNTAR com o que você já tem, não vai apagar a outra filha.';
   document.getElementById('backup-codigo').value='';
   document.getElementById('backup-acao').textContent='Importar Agora';
   document.getElementById('backup-acao').onclick=()=>{
     try{
-      const texto=document.getElementById('backup-codigo').value.trim();
-      if(!texto) return;
-      const novo=JSON.parse(decodeURIComponent(escape(atob(texto))));
-      if(!novo.filhas) throw new Error('invalido');
-      novo.pin=dados.pin;
-      if(!novo.folgas) novo.folgas={};
-      dados=novo; salvar(); fechar('modal-backup'); toast('Backup importado! ✅');
+      const texto=document.getElementById('backup-codigo').value.trim(); if(!texto) return;
+      const novo=JSON.parse(decodeURIComponent(escape(atob(texto)))); if(!novo.filhas) throw new Error('invalido');
+      novo.filhas.forEach(fNova=>{ const fAtual=dados.filhas.find(f=>f.id===fNova.id); if(fAtual){ fAtual.xp=fNova.xp; fAtual.pontos=fNova.pontos; fAtual.nome=fNova.nome; fAtual.avatar=fNova.avatar; } else { dados.filhas.push(fNova); } });
+      novo.tarefas.forEach(tNova=>{ if(!dados.tarefas.find(t=>t.id===tNova.id)) dados.tarefas.push(tNova); });
+      dados.feitos={...dados.feitos, ...novo.feitos}; dados.folgas={...dados.folgas, ...novo.folgas}; dados.valor=novo.valor || dados.valor;
+      salvar(); fechar('modal-backup'); toast('Backup juntado! ✅ A outra filha não foi apagada.');
     }catch(e){ toast('Código inválido. Pede pra ela gerar de novo.'); }
   };
   abrir('modal-backup');
 }
+function verificarBackupAutomatico(){ const hoje=new Date().toDateString(); const ultimo=localStorage.getItem('ultimo_backup_dia'); const hora=new Date().getHours(); if(hora>=20 && ultimo!==hoje){ if(confirm('📦 Fim do dia! Mandar o backup de hoje pra mamãe no WhatsApp?')){ localStorage.setItem('ultimo_backup_dia', hoje); gerarBackup(); } } }
 if(dados.filhas.length>0) aba=dados.filhas[0].id;
 render();
-</script>
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(()=>{});
-}
-  // BACKUP AUTOMÁTICO DO FIM DO DIA
-function verificarBackupAutomatico(){
-  const hoje = new Date().toDateString();
-  const ultimo = localStorage.getItem('ultimo_backup_dia');
-  const hora = new Date().getHours();
-  if(hora >= 20 && ultimo !== hoje){
-    if(confirm('📦 Fim do dia! Mandar o backup de hoje pra mamãe no WhatsApp?')){
-      localStorage.setItem('ultimo_backup_dia', hoje);
-      gerarBackup();
-    }
-  }
-}
 setTimeout(verificarBackupAutomatico, 2000);
 </script>
+<script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(()=>{}); }</script>
 </body>
 </html>
