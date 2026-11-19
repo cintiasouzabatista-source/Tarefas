@@ -1,6 +1,12 @@
-const CACHE = 'tarefas-familia-v8';
+const CACHE = 'tarefas-familia-v9';
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './index.html', './manifest.json'])));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll([
+    './',
+    './index.html',
+    './manifest.json',
+    './icon-192x192.png',
+    './icon-512x512.png'
+  ])));
   self.skipWaiting();
 });
 self.addEventListener('activate', e => {
@@ -8,5 +14,11 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 self.addEventListener('fetch', e => {
-  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+  e.respondWith(
+    fetch(e.request).then(res => {
+      const copy = res.clone();
+      caches.open(CACHE).then(c => c.put(e.request, copy));
+      return res;
+    }).catch(() => caches.match(e.request))
+  );
 });
