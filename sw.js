@@ -1,4 +1,4 @@
-const CACHE = 'tarefas-familia-v9';
+const CACHE = 'tarefas-familia-v10';
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll([
     './',
