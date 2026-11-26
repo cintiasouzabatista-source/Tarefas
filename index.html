@@ -40,11 +40,61 @@ function valorFormat(v){return 'R$ '+v.toFixed(2).replace('.',',')}
 function salvar(){try{localStorage.setItem('dadosClean',JSON.stringify(dados))}catch(e){}}function toast(t){var el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(function(){el.classList.remove('show')},2500)}function fecharModais(){document.querySelectorAll('.modal').forEach(function(m){m.classList.remove('open')})}function abrirModal(id){document.getElementById('fab').classList.remove('open');document.getElementById(id).classList.add('open')}
 var acaoConfirma=null;
 function pedirConfirma(titulo,txt,acao){document.getElementById('titConfirma').textContent=titulo;document.getElementById('txtConfirma').textContent=txt;acaoConfirma=acao;fecharModais();abrirModal('modalConfirma')}
-function gerarCodigo(){var f=dados.filhas.find(function(x){return x.nome===filhaLogada})||dados.filhas[0];if(!f)return '';var payload={nome:f.nome,feitas:Object.keys(f.feitas||{}),humor:(f.humorHist||[]).filter(function(h){return h.data===dataHojeStr()})[0]||null,data:dataHojeStr(),dow:dowHoje()};try{return 'H:'+btoa(encodeURIComponent(JSON.stringify(payload)))}catch(e){return ''}}
-function importarCodigo(cod){cod=(cod||'').trim();if(cod.indexOf('H:')===0){try{var payload=JSON.parse(decodeURIComponent(atob(cod.slice(2))));var f=dados.filhas.find(function(x){return x.nome===payload.nome});if(!f)return false;if(!f.feitas)f.feitas={};if(!f.historico)f.historico=[];if(!f.humorHist)f.humorHist=[];(payload.feitas||[]).forEach(function(n){if(!f.feitas[n]){f.feitas[n]=true;f.historico.push({tarefa:n,data:payload.data||dataHojeStr(),dow:payload.dow||dowHoje()})}});if(payload.humor){var ja=f.humorHist.find(function(h){return h.data===payload.humor.data});if(ja){ja.emoji=payload.humor.emoji;ja.texto=payload.humor.texto;ja.label=payload.humor.label}else{f.humorHist.push(payload.humor)}}return true}catch(e){return false}}
-cod=cod.toUpperCase().replace(/[^A-Z0-9\-]/g,'');var ok=false;cod.split('-').forEach(function(p){if(p.length<2)return;var f2=dados.filhas.find(function(x){return x.nome.charAt(0).toUpperCase()===p.charAt(0)});if(f2){if(!f2.feitas)f2.feitas={};if(!f2.historico)f2.historico=[];var bits=p.slice(1);for(var i=0;i<Math.min(bits.length,dados.listaGeral.length);i++){var n=nomeTarefa(dados.listaGeral[i]);if(bits[i]==='1'){if(!f2.feitas[n]){f2.feitas[n]=true;f2.historico.push({tarefa:n,data:dataHojeStr(),dow:dowHoje()})}}else delete f2.feitas[n]}ok=true}});return ok}
-var editFilhaIdx=-1,editTarefaNome='',abertoHist={},rotinaTemp={escolaDe:'',escolaAte:'',atividades:[]},humorSel='';
-function abrirGerenciar(){var w=document.getElementById('listaGerenciar');w.innerHTML='';if(!dados.filhas.length)w.innerHTML='<p style="text-align:center;color:#888">Nenhuma filha.</p>';dados.filhas.forEach(function(f,idx){var r=document.createElement('div');r.className='gerRow';var b=document.createElement('b');b.textContent=f.nome;r.appendChild(b);var e=document.createElement('button');e.textContent='Editar';e.style.cssText='border:0;background:#e0e7ff;padding:8px 10px;border-radius:99px;cursor:pointer';e.onclick=function(){fecharModais();editFilhaIdx=idx;document.getElementById('titFilha').textContent='Editar Filha';document.getElementById('inNomeFilha').value=f.nome;abrirModal('modalFilha')};r.appendChild(e);var d=document.createElement('button');d.textContent='Excluir';d.style.cssText='border:0;background:#fee2e2;padding:8px 10px;border-radius:99px;cursor:pointer';d.onclick=function(){pedirConfirma('Excluir '+f.nome+'?','Vai apagar a filha e o historico dela.',function(){dados.filhas.splice(idx,1);salvar();abrirGerenciar();render()})};r.appendChild(d);w.appendChild(r)});abrirModal('modalGerenciar')}
+function gerarCodigoResultado(){
+var f=dados.filhas.find(function(x){return x.nome===filhaLogada})||dados.filhas[0];if(!f)return '';
+// Compacto: manda TODOS os dias salvos, nao so hoje
+// Formato: [nome, [[data, wk, [indices das tarefas]], ...], [[data, emoji, label, texto], ...]]
+try{
+var dias={};
+(f.historico||[]).forEach(function(h){
+if(!dias[h.data])dias[h.data]={wk:h.wk||h.dow||'',idx:[]};
+var i=dados.listaGeral.findIndex(function(x){return nomeTarefa(x)===h.tarefa});
+if(i>=0&&dias[h.data].idx.indexOf(i)<0)dias[h.data].idx.push(i);
+});
+var arrDias=Object.keys(dias).map(function(d){return [d,dias[d].wk,dias[d].idx]});
+var arrHumor=(f.humorHist||[]).map(function(h){return [h.data,h.emoji,h.label,h.texto||'']});
+var payload=[f.nome,arrDias,arrHumor];
+return 'H:'+btoa(encodeURIComponent(JSON.stringify(payload)));
+}catch(e){return ''}}
+function importarCodigo(cod){
+cod=(cod||'').trim();
+if(cod.indexOf('T:')===0){
+try{var p=JSON.parse(decodeURIComponent(atob(cod.slice(2))));
+if(p.tipo!=='TAREFAS')return false;
+if(p.lista&&p.lista.length){dados.listaGeral=p.lista;if(p.valor!=null)dados.valor=p.valor;salvar();return 'TAREFAS'}return false}catch(e){return false}}
+if(cod.indexOf('H:')===0){
+try{var pl=JSON.parse(decodeURIComponent(atob(cod.slice(2))));
+// Novo formato compacto: [nome, [[data,wk,[idx]],...], [[data,emoji,label,texto],...]]
+var nomeFilha, arrDias, arrHumor;
+if(Array.isArray(pl)){nomeFilha=pl[0];arrDias=pl[1]||[];arrHumor=pl[2]||[]}
+else{nomeFilha=pl.nome;arrDias=null;arrHumor=null}
+var f=dados.filhas.find(function(x){return x.nome===nomeFilha});
+if(!f){f={nome:nomeFilha,feitas:{},historico:[],humorHist:[],rotina:{escolaDe:'',escolaAte:'',atividades:[]}};dados.filhas.push(f)}
+if(!f.feitas)f.feitas={};if(!f.historico)f.historico=[];if(!f.humorHist)f.humorHist=[];
+if(arrDias){
+// Compacto
+arrDias.forEach(function(d){
+var data=d[0], wkDia=d[1], idxs=d[2]||[];
+idxs.forEach(function(i){
+var t=dados.listaGeral[i];if(!t)return;
+var nome=nomeTarefa(t);
+if(!f.historico.find(function(x){return x.tarefa===nome&&x.data===data}))f.historico.push({tarefa:nome,data:data,wk:wkDia});
+});
+});
+arrHumor.forEach(function(hm){
+var ex=f.humorHist.find(function(x){return x.data===hm[0]});
+if(!ex)f.humorHist.push({data:hm[0],emoji:hm[1],label:hm[2],texto:hm[3]||'',wk:''});
+else{ex.emoji=hm[1];ex.label=hm[2];ex.texto=hm[3]||''}
+});
+}else{
+// Formato antigo, pra nao perder codigo que ja foi mandado
+(pl.hist||[]).forEach(function(h){if(!f.historico.find(function(x){return x.tarefa===h.tarefa&&x.data===h.data}))f.historico.push(h)});
+(pl.humor||[]).forEach(function(hm){var ex2=f.humorHist.find(function(x){return x.data===hm.data});if(!ex2)f.humorHist.push(hm);else{ex2.emoji=hm.emoji;ex2.texto=hm.texto;ex2.label=hm.label}});
+}
+var hojeHist=f.historico.filter(function(h){return h.data===dataHojeStr()});
+if(hojeHist.length){f.feitas={};hojeHist.forEach(function(h){f.feitas[h.tarefa]=true})}
+return 'RESULTADO'}catch(e){return false}}
+return false}function abrirGerenciar(){var w=document.getElementById('listaGerenciar');w.innerHTML='';if(!dados.filhas.length)w.innerHTML='<p style="text-align:center;color:#888">Nenhuma filha.</p>';dados.filhas.forEach(function(f,idx){var r=document.createElement('div');r.className='gerRow';var b=document.createElement('b');b.textContent=f.nome;r.appendChild(b);var e=document.createElement('button');e.textContent='Editar';e.style.cssText='border:0;background:#e0e7ff;padding:8px 10px;border-radius:99px;cursor:pointer';e.onclick=function(){fecharModais();editFilhaIdx=idx;document.getElementById('titFilha').textContent='Editar Filha';document.getElementById('inNomeFilha').value=f.nome;abrirModal('modalFilha')};r.appendChild(e);var d=document.createElement('button');d.textContent='Excluir';d.style.cssText='border:0;background:#fee2e2;padding:8px 10px;border-radius:99px;cursor:pointer';d.onclick=function(){pedirConfirma('Excluir '+f.nome+'?','Vai apagar a filha e o historico dela.',function(){dados.filhas.splice(idx,1);salvar();abrirGerenciar();render()})};r.appendChild(d);w.appendChild(r)});abrirModal('modalGerenciar')}
 function abrirNovaTarefa(){document.getElementById('inNomeTarefa').value='';document.getElementById('buscaTarefa').value='';document.getElementById('chkValeNova').checked=true;document.getElementById('inValorNova').value='1.00';renderPreset('');abrirModal('modalTarefa')}
 function renderPreset(busca){var w=document.getElementById('listaPreset');w.innerHTML='';PRESET.filter(function(n){return !busca||n.toLowerCase().indexOf(busca)>=0}).forEach(function(n){var b=document.createElement('button');b.className='presetBtn';var ex=dados.listaGeral.find(function(x){return nomeTarefa(x)===n});b.textContent=(ex?'OK ':'')+n;b.onclick=function(){document.getElementById('inNomeTarefa').value=n};w.appendChild(b)})}
 function gerarLink(){try{return location.href.split('?')[0]+'?filhos&d='+btoa(encodeURIComponent(JSON.stringify(dados)))}catch(e){return location.href.split('?')[0]+'?filhos'}}
